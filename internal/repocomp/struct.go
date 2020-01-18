@@ -1,24 +1,24 @@
 package repocomp
 
 import (
-	. "gorepogen/internal/helper"
+	h "gorepogen/internal/helper"
 
-	. "github.com/dave/jennifer/jen"
+	j "github.com/dave/jennifer/jen"
 )
 
 type structGenerator struct {
 	structName string
-	dbField    *Statement
+	dbField    *j.Statement
 }
 
-func NewStruct(structName string) Appender {
+func NewStruct(structName string) h.Appender {
 	return &structGenerator{
 		structName: structName,
-		dbField:    Op("*").Qual("github.com/jinzhu/gorm", "DB"),
+		dbField:    j.Op("*").Qual("github.com/jinzhu/gorm", "DB"),
 	}
 }
 
-func (sg *structGenerator) AppendTo(file *File) {
+func (sg *structGenerator) AppendTo(file *j.File) {
 	file.Type().
 		Id(sg.structName).
 		Struct(sg.dbField).

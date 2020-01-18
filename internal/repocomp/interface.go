@@ -1,9 +1,9 @@
 package repocomp
 
 import (
-	. "gorepogen/internal/helper"
+	h "gorepogen/internal/helper"
 
-	. "github.com/dave/jennifer/jen"
+	j "github.com/dave/jennifer/jen"
 )
 
 type interfaceGenerator struct {
@@ -12,7 +12,7 @@ type interfaceGenerator struct {
 	fullPackageName string
 }
 
-func NewInterface(interfaceName, entityName, fullPackageName string) Appender {
+func NewInterface(interfaceName, entityName, fullPackageName string) h.Appender {
 	return &interfaceGenerator{
 		interfaceName:   interfaceName,
 		entityName:      entityName,
@@ -20,27 +20,27 @@ func NewInterface(interfaceName, entityName, fullPackageName string) Appender {
 	}
 }
 
-func (ig *interfaceGenerator) AppendTo(file *File) {
+func (ig *interfaceGenerator) AppendTo(file *j.File) {
 	file.Type().
 		Id(ig.interfaceName).
 		Interface(
-			Id(findAllMethod).
+			j.Id(findAllMethod).
 				Params().
-				Params(List(Index().Qual(ig.fullPackageName, ig.entityName), Error())),
-			Id(findByIdMethod).
-				Params(Uint()).
-				Params(List(Qual(ig.fullPackageName, ig.entityName), Error())),
-			Id(saveMethod).
-				Params(Qual(ig.fullPackageName, ig.entityName)).
-				Params(Qual(ig.fullPackageName, ig.entityName), Error()),
-			Id(updateMethod).
-				Params(Qual(ig.fullPackageName, ig.entityName)).
-				Params(Error()),
-			Id(deleteMethod).
-				Params(Qual(ig.fullPackageName, ig.entityName)).Error(),
-			Id(countMethod).
+				Params(j.List(j.Index().Qual(ig.fullPackageName, ig.entityName), j.Error())),
+			j.Id(findByIdMethod).
+				Params(j.Uint()).
+				Params(j.List(j.Qual(ig.fullPackageName, ig.entityName), j.Error())),
+			j.Id(saveMethod).
+				Params(j.Qual(ig.fullPackageName, ig.entityName)).
+				Params(j.Qual(ig.fullPackageName, ig.entityName), j.Error()),
+			j.Id(updateMethod).
+				Params(j.Qual(ig.fullPackageName, ig.entityName)).
+				Params(j.Error()),
+			j.Id(deleteMethod).
+				Params(j.Qual(ig.fullPackageName, ig.entityName)).Error(),
+			j.Id(countMethod).
 				Params().
-				Params(Uint(), Error()),
+				Params(j.Uint(), j.Error()),
 		).
 		Line()
 }

@@ -1,8 +1,8 @@
 package helper
 
-import . "github.com/dave/jennifer/jen"
+import j "github.com/dave/jennifer/jen"
 
 type StatementPair struct {
-	ArgName *Statement
-	ArgType *Statement
+	ArgName *j.Statement
+	ArgType *j.Statement
 }

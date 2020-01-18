@@ -1,7 +1,7 @@
 package helper
 
-import . "github.com/dave/jennifer/jen"
+import j "github.com/dave/jennifer/jen"
 
 type Appender interface {
-	AppendTo(*File)
+	AppendTo(*j.File)
 }

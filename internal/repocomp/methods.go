@@ -1,9 +1,9 @@
 package repocomp
 
 import (
-	. "gorepogen/internal/helper"
+	h "gorepogen/internal/helper"
 
-	. "github.com/dave/jennifer/jen"
+	j "github.com/dave/jennifer/jen"
 )
 
 const (
@@ -26,11 +26,11 @@ var (
 )
 
 type method struct {
-	receiverName *Statement
+	receiverName *j.Statement
 	methodName   string
-	args         []StatementPair
-	returnParams *Statement
-	fnBody       *Statement
+	args         []h.StatementPair
+	returnParams *j.Statement
+	fnBody       *j.Statement
 }
 
 type methodsList struct {
@@ -39,78 +39,78 @@ type methodsList struct {
 	methods               []method
 }
 
-func NewMethodsList(receiverName, entityNameWithPackage string) Appender {
+func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 	return &methodsList{
 		receiverName:          receiverName,
 		entityNameWithPackage: entityNameWithPackage,
 		methods: []method{
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   findAllMethod,
 				args:         nil,
-				returnParams: List(Index().Id(entityNameWithPackage), Error()),
+				returnParams: j.List(j.Index().Id(entityNameWithPackage), j.Error()),
 				fnBody:       findAllFuncBody(entityNameWithPackage),
 			},
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   findByIdMethod,
-				args: []StatementPair{
+				args: []h.StatementPair{
 					{
-						ArgName: Id(idLit),
-						ArgType: Uint(),
+						ArgName: j.Id(idLit),
+						ArgType: j.Uint(),
 					},
 				},
-				returnParams: List(Id(entityNameWithPackage), Error()),
+				returnParams: j.List(j.Id(entityNameWithPackage), j.Error()),
 				fnBody:       findByIdFuncBody(entityNameWithPackage),
 			},
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   saveMethod,
-				args: []StatementPair{
+				args: []h.StatementPair{
 					{
-						ArgName: Id(entityLit),
-						ArgType: Id(entityNameWithPackage),
+						ArgName: j.Id(entityLit),
+						ArgType: j.Id(entityNameWithPackage),
 					},
 				},
-				returnParams: List(Id(entityNameWithPackage), Error()),
+				returnParams: j.List(j.Id(entityNameWithPackage), j.Error()),
 				fnBody:       saveFuncBody(),
 			},
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   updateMethod,
-				args: []StatementPair{
+				args: []h.StatementPair{
 					{
-						ArgName: Id(entityLit),
-						ArgType: Id(entityNameWithPackage),
+						ArgName: j.Id(entityLit),
+						ArgType: j.Id(entityNameWithPackage),
 					},
 				},
-				returnParams: Error(),
+				returnParams: j.Error(),
 				fnBody:       updateFuncBody(),
 			},
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   deleteMethod,
-				args: []StatementPair{
+				args: []h.StatementPair{
 					{
-						ArgName: Id(entityLit),
-						ArgType: Id(entityNameWithPackage),
+						ArgName: j.Id(entityLit),
+						ArgType: j.Id(entityNameWithPackage),
 					},
 				},
-				returnParams: Error(),
+				returnParams: j.Error(),
 				fnBody:       deleteFuncBody(),
 			},
 			{
-				receiverName: Id(receiverName),
+				receiverName: j.Id(receiverName),
 				methodName:   countMethod,
 				args:         nil,
-				returnParams: List(Uint(), Error()),
+				returnParams: j.List(j.Uint(), j.Error()),
 				fnBody:       countFuncBody(entityNameWithPackage),
 			},
 		},
 	}
 }
 
-func (ml *methodsList) AppendTo(file *File) {
+func (ml *methodsList) AppendTo(file *j.File) {
 	for _, m := range ml.methods {
 		file.Func().
 			Params(m.receiverName).
@@ -122,8 +122,8 @@ func (ml *methodsList) AppendTo(file *File) {
 	}
 }
 
-func (ml *methodsList) generateMethodParams(args []StatementPair) func(group *Group) {
-	return func(group *Group) {
+func (ml *methodsList) generateMethodParams(args []h.StatementPair) func(group *j.Group) {
+	return func(group *j.Group) {
 		for _, p := range args {
 			group.Add(p.ArgName).Add(p.ArgType)
 		}
