@@ -19,7 +19,7 @@ func TestSearch(t *testing.T) {
 
 		filePath := testutil.CreateTempFile(t, cd, "package entity\n\ntype User struct {}")
 
-		expected := &EntityInfo{
+		expected := &entityInfo{
 			Name:            "User",
 			Package:         "entity",
 			FullPackagePath: "generator",

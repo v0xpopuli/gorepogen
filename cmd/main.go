@@ -41,7 +41,7 @@ func generate(c *cli.Context) error {
 		return err
 	}
 
-	namesRegistry := g.ResolveNamesRegistry(entityInfo)
+	namesRegistry := g.CreateNamesRegistry(entityInfo)
 	components := g.AssignNamesToComponents(namesRegistry)
 
 	repositoryFullPath, err := g.Generate(components, namesRegistry, cd)

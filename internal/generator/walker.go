@@ -15,7 +15,7 @@ var (
 	excludedDirs  = []string{".git", ".idea", ".vscode"}
 )
 
-type EntityInfo struct {
+type entityInfo struct {
 	Name            string
 	Package         string
 	FullPackagePath string
@@ -23,9 +23,9 @@ type EntityInfo struct {
 
 // Search searching for entity by given entity name
 // from directory where program was ran
-func Search(whereToSearch, entityName string) (*EntityInfo, error) {
+func Search(whereToSearch, entityName string) (*entityInfo, error) {
 
-	var entityInfo EntityInfo
+	var entityInfo entityInfo
 	err := filepath.Walk(
 		whereToSearch,
 		search(filepath.Base(whereToSearch), entityName, &entityInfo),
@@ -40,7 +40,7 @@ func Search(whereToSearch, entityName string) (*EntityInfo, error) {
 	return &entityInfo, nil
 }
 
-func search(projectDir, entityName string, entityInfo *EntityInfo) filepath.WalkFunc {
+func search(projectDir, entityName string, entityInfo *entityInfo) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err

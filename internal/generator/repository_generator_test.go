@@ -81,7 +81,7 @@ func TestResolveNamesRegistry(t *testing.T) {
 		RepositoryPackageName: "repository",
 	}
 
-	actual := ResolveNamesRegistry(&EntityInfo{
+	actual := CreateNamesRegistry(&entityInfo{
 		Name:            "User",
 		Package:         "entity",
 		FullPackagePath: "project/entity",
