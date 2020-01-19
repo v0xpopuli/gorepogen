@@ -61,7 +61,7 @@ func TestGenerate(t *testing.T) {
 	asrt.Nil(err)
 	asrt.Equal(expected, actual)
 
-	testutil.DeleteTempFile(t, actual)
+	testutil.DeleteTempFile(t, filepath.Dir(actual))
 }
 
 func TestResolveNamesRegistry(t *testing.T) {

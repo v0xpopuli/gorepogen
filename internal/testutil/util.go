@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// CreateTempFile provide with ability to
+// CreateTempFile provide ability to
 // create temporary files during testing
 func CreateTempFile(t *testing.T, cd, content string) string {
 
@@ -25,10 +25,10 @@ func CreateTempFile(t *testing.T, cd, content string) string {
 	return filePath
 }
 
-// DeleteTempFile provide with ability to
+// DeleteTempFile provide ability to
 // delete temporary files after test execution
 func DeleteTempFile(t *testing.T, filePath string) {
-	if err := os.Remove(filePath); err != nil {
+	if err := os.RemoveAll(filePath); err != nil {
 		t.Error("Failed to delete temp file:"+filePath, err)
 	}
 }
