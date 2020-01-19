@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	. "gorepogen/internal/generator"
-	. "gorepogen/internal/helper"
+	g "gorepogen/internal/generator"
+	h "gorepogen/internal/helper"
 	"os"
 
 	"github.com/pkg/errors"
@@ -37,15 +37,15 @@ func generate(c *cli.Context) error {
 		return errors.New("provide entity name please")
 	}
 
-	entityInfo, err := Search(cd, args.Get(0))
+	entityInfo, err := h.Search(cd, args.Get(0))
 	if err != nil {
 		return err
 	}
 
-	namesRegistry := ResolveNamesRegistry(entityInfo)
-	components := AssignNamesToComponents(namesRegistry)
+	namesRegistry := g.ResolveNamesRegistry(entityInfo)
+	components := g.AssignNamesToComponents(namesRegistry)
 
-	repositoryFullPath, err := Generate(components, namesRegistry, cd)
+	repositoryFullPath, err := g.Generate(components, namesRegistry, cd)
 	if err != nil {
 		return err
 	}

@@ -11,6 +11,7 @@ type structGenerator struct {
 	dbField    *j.Statement
 }
 
+// NewStruct renders struct block
 func NewStruct(structName string) h.Appender {
 	return &structGenerator{
 		structName: structName,

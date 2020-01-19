@@ -1,5 +1,7 @@
 package helper
 
+// NamesRegistry provides all existing names
+// needed for auto generation
 type NamesRegistry struct {
 	EntityName            string
 	PackageName           string

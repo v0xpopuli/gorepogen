@@ -12,6 +12,7 @@ type interfaceGenerator struct {
 	fullPackageName string
 }
 
+// NewInterface renders interface block
 func NewInterface(interfaceName, entityName, fullPackageName string) h.Appender {
 	return &interfaceGenerator{
 		interfaceName:   interfaceName,

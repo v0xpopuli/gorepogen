@@ -14,6 +14,7 @@ type constructorGenerator struct {
 	structArgs      j.Dict
 }
 
+// NewConstructor renders constructor block
 func NewConstructor(constructorName, interfaceName, structName string) h.Appender {
 	return &constructorGenerator{
 		constructorName: constructorName,

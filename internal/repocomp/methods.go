@@ -39,6 +39,7 @@ type methodsList struct {
 	methods               []method
 }
 
+// NewMethodsList renders method list
 func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 	return &methodsList{
 		receiverName:          receiverName,
