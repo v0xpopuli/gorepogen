@@ -1,4 +1,4 @@
-package helper
+package generator
 
 // NamesRegistry provides all existing names
 // needed for auto generation

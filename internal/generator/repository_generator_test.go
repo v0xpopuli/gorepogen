@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"gorepogen/internal/helper"
 	"gorepogen/internal/repocomp"
 	"gorepogen/internal/testutil"
 	"os"
@@ -13,7 +12,7 @@ import (
 
 func TestAssignNamesToComponents(t *testing.T) {
 
-	namesRegistry := helper.NamesRegistry{
+	namesRegistry := NamesRegistry{
 		EntityName:            "User",
 		PackageName:           "entity",
 		FullPackageName:       "project/entity",
@@ -38,7 +37,7 @@ func TestGenerate(t *testing.T) {
 
 	expected := filepath.Join(cd, "repository", "user_repository.go")
 
-	namesRegistry := helper.NamesRegistry{
+	namesRegistry := NamesRegistry{
 		EntityName:            "User",
 		PackageName:           "entity",
 		FullPackageName:       "project/entity",
@@ -51,7 +50,7 @@ func TestGenerate(t *testing.T) {
 		RepositoryPackageName: "repository",
 	}
 
-	components := []helper.Appender{
+	components := []repocomp.Appender{
 		repocomp.NewInterface(namesRegistry.GetInterfaceNames()),
 		repocomp.NewStruct(namesRegistry.GetStructNames()),
 		repocomp.NewConstructor(namesRegistry.GetConstructorNames()),
@@ -69,7 +68,7 @@ func TestResolveNamesRegistry(t *testing.T) {
 
 	asrt := assert.New(t)
 
-	expected := helper.NamesRegistry{
+	expected := NamesRegistry{
 		EntityName:            "User",
 		PackageName:           "entity",
 		FullPackageName:       "project/entity",
@@ -82,7 +81,7 @@ func TestResolveNamesRegistry(t *testing.T) {
 		RepositoryPackageName: "repository",
 	}
 
-	actual := ResolveNamesRegistry(&helper.EntityInfo{
+	actual := ResolveNamesRegistry(&EntityInfo{
 		Name:            "User",
 		Package:         "entity",
 		FullPackagePath: "project/entity",

@@ -1,4 +1,4 @@
-package helper
+package repocomp
 
 import j "github.com/dave/jennifer/jen"
 

@@ -1,8 +1,6 @@
 package repocomp
 
 import (
-	h "gorepogen/internal/helper"
-
 	j "github.com/dave/jennifer/jen"
 )
 
@@ -13,7 +11,7 @@ type interfaceGenerator struct {
 }
 
 // NewInterface renders interface block
-func NewInterface(interfaceName, entityName, fullPackageName string) h.Appender {
+func NewInterface(interfaceName, entityName, fullPackageName string) Appender {
 	return &interfaceGenerator{
 		interfaceName:   interfaceName,
 		entityName:      entityName,

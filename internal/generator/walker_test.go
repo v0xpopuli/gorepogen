@@ -1,4 +1,4 @@
-package helper
+package generator
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func TestSearch(t *testing.T) {
 		expected := &EntityInfo{
 			Name:            "User",
 			Package:         "entity",
-			FullPackagePath: "helper",
+			FullPackagePath: "generator",
 		}
 		actual, err := Search(cd, "User")
 

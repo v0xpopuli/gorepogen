@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	g "gorepogen/internal/generator"
-	h "gorepogen/internal/helper"
 	"os"
 
 	"github.com/pkg/errors"
@@ -37,7 +36,7 @@ func generate(c *cli.Context) error {
 		return errors.New("provide entity name please")
 	}
 
-	entityInfo, err := h.Search(cd, args.Get(0))
+	entityInfo, err := g.Search(cd, args.Get(0))
 	if err != nil {
 		return err
 	}

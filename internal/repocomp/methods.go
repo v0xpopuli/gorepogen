@@ -1,8 +1,6 @@
 package repocomp
 
 import (
-	h "gorepogen/internal/helper"
-
 	j "github.com/dave/jennifer/jen"
 )
 
@@ -25,10 +23,15 @@ var (
 	errorLit = "Error"
 )
 
+type statementPair struct {
+	ArgName *j.Statement
+	ArgType *j.Statement
+}
+
 type method struct {
 	receiverName *j.Statement
 	methodName   string
-	args         []h.StatementPair
+	args         []statementPair
 	returnParams *j.Statement
 	fnBody       *j.Statement
 }
@@ -40,7 +43,7 @@ type methodsList struct {
 }
 
 // NewMethodsList renders method list
-func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
+func NewMethodsList(receiverName, entityNameWithPackage string) Appender {
 	return &methodsList{
 		receiverName:          receiverName,
 		entityNameWithPackage: entityNameWithPackage,
@@ -55,7 +58,7 @@ func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 			{
 				receiverName: j.Id(receiverName),
 				methodName:   findByIdMethod,
-				args: []h.StatementPair{
+				args: []statementPair{
 					{
 						ArgName: j.Id(idLit),
 						ArgType: j.Uint(),
@@ -67,7 +70,7 @@ func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 			{
 				receiverName: j.Id(receiverName),
 				methodName:   saveMethod,
-				args: []h.StatementPair{
+				args: []statementPair{
 					{
 						ArgName: j.Id(entityLit),
 						ArgType: j.Id(entityNameWithPackage),
@@ -79,7 +82,7 @@ func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 			{
 				receiverName: j.Id(receiverName),
 				methodName:   updateMethod,
-				args: []h.StatementPair{
+				args: []statementPair{
 					{
 						ArgName: j.Id(entityLit),
 						ArgType: j.Id(entityNameWithPackage),
@@ -91,7 +94,7 @@ func NewMethodsList(receiverName, entityNameWithPackage string) h.Appender {
 			{
 				receiverName: j.Id(receiverName),
 				methodName:   deleteMethod,
-				args: []h.StatementPair{
+				args: []statementPair{
 					{
 						ArgName: j.Id(entityLit),
 						ArgType: j.Id(entityNameWithPackage),
@@ -123,7 +126,7 @@ func (ml *methodsList) AppendTo(file *j.File) {
 	}
 }
 
-func (ml *methodsList) generateMethodParams(args []h.StatementPair) func(group *j.Group) {
+func (ml *methodsList) generateMethodParams(args []statementPair) func(group *j.Group) {
 	return func(group *j.Group) {
 		for _, p := range args {
 			group.Add(p.ArgName).Add(p.ArgType)

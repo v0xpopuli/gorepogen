@@ -1,4 +1,4 @@
-package helper
+package generator
 
 import (
 	"bufio"
@@ -21,6 +21,8 @@ type EntityInfo struct {
 	FullPackagePath string
 }
 
+// Search searching for entity by given entity name
+// from directory where program was ran
 func Search(whereToSearch, entityName string) (*EntityInfo, error) {
 
 	var entityInfo EntityInfo

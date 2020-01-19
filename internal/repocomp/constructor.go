@@ -1,8 +1,6 @@
 package repocomp
 
 import (
-	h "gorepogen/internal/helper"
-
 	j "github.com/dave/jennifer/jen"
 )
 
@@ -15,7 +13,7 @@ type constructorGenerator struct {
 }
 
 // NewConstructor renders constructor block
-func NewConstructor(constructorName, interfaceName, structName string) h.Appender {
+func NewConstructor(constructorName, interfaceName, structName string) Appender {
 	return &constructorGenerator{
 		constructorName: constructorName,
 		interfaceName:   interfaceName,

@@ -1,8 +1,6 @@
 package repocomp
 
 import (
-	h "gorepogen/internal/helper"
-
 	j "github.com/dave/jennifer/jen"
 )
 
@@ -12,7 +10,7 @@ type structGenerator struct {
 }
 
 // NewStruct renders struct block
-func NewStruct(structName string) h.Appender {
+func NewStruct(structName string) Appender {
 	return &structGenerator{
 		structName: structName,
 		dbField:    j.Op("*").Qual("github.com/jinzhu/gorm", "DB"),
