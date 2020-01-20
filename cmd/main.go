@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	g "gorepogen/internal/generator"
 	"os"
+
+	g "github.com/v0xpopuli/gorepogen/internal/generator"
 
 	"github.com/pkg/errors"
 	"github.com/urfave/cli"

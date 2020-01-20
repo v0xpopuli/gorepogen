@@ -1,11 +1,12 @@
 package generator
 
 import (
-	"gorepogen/internal/repocomp"
-	"gorepogen/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/v0xpopuli/gorepogen/internal/repocomp"
+	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
 )

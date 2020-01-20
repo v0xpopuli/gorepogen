@@ -2,10 +2,11 @@ package generator
 
 import (
 	"fmt"
-	"gorepogen/internal/testutil"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -2,10 +2,11 @@ package generator
 
 import (
 	"fmt"
-	rc "gorepogen/internal/repocomp"
 	"os"
 	"path/filepath"
 	"strings"
+
+	rc "github.com/v0xpopuli/gorepogen/internal/repocomp"
 
 	j "github.com/dave/jennifer/jen"
 )
