@@ -5,13 +5,11 @@ Simple Go tool, for repositories auto generation.
 
 
 #### **Installation**
-```go get -u github.com/v0xpopuli/gorepogen```, then ```$GOPATH/bin/gorepogen```
+```go get -u -v github.com/v0xpopuli/gorepogen```, then from downloaded ```go build -o $GOPATH/bin/gorepogen```
 
 
 #### **Usage**
-* Go to the root of your project
-* Run ```gorepogen [entity name]```
-* Voila!
+Use ```gorepogen -h``` for help
 
 
 #### **Note**

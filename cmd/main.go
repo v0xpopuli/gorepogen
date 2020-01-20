@@ -7,18 +7,40 @@ import (
 	g "github.com/v0xpopuli/gorepogen/internal/generator"
 
 	"github.com/pkg/errors"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
+
+var name string
+var root string
 
 func main() {
 
 	app := &cli.App{
 		Name:      "gorepogen",
 		Usage:     "tool for repositories auto generation",
-		UsageText: "gorepogen [entity name]",
+		UsageText: "gorepogen [global options]",
 		Version:   "1.0.0",
-		Author:    "v0xpopuli",
-		Action:    generate,
+		Authors: []*cli.Author{
+			{
+				Name:  "v0xpopuli",
+				Email: "vadim.rozhkalns@gmail.com",
+			},
+		},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "name",
+				Aliases:     []string{"n"},
+				Usage:       "Entity name",
+				Destination: &name,
+			},
+			&cli.StringFlag{
+				Name:        "root",
+				Aliases:     []string{"r"},
+				Usage:       "Project root",
+				Destination: &root,
+			},
+		},
+		Action: generate,
 	}
 
 	err := app.Run(os.Args)
@@ -29,15 +51,17 @@ func main() {
 
 }
 
-func generate(c *cli.Context) error {
+func generate(_ *cli.Context) error {
 
-	cd, _ := os.Getwd()
-	args := c.Args()
-	if len(args) == 0 {
-		return errors.New("provide entity name please")
+	if root == "" {
+		root, _ = os.Getwd()
 	}
 
-	entityInfo, err := g.Search(cd, args.Get(0))
+	if name == "" {
+		return errors.New(`use "gorepogen -h" for help`)
+	}
+
+	entityInfo, err := g.Search(root, name)
 	if err != nil {
 		return err
 	}
@@ -45,7 +69,7 @@ func generate(c *cli.Context) error {
 	namesRegistry := g.CreateNamesRegistry(entityInfo)
 	components := g.AssignNamesToComponents(namesRegistry)
 
-	repositoryFullPath, err := g.Generate(components, namesRegistry, cd)
+	repositoryFullPath, err := g.Generate(components, namesRegistry, root)
 	if err != nil {
 		return err
 	}
