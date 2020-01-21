@@ -10,11 +10,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	entityPattern = "type %s struct"
-	excludedDirs  = []string{".git", ".idea", ".vscode"}
-)
-
 type entityInfo struct {
 	Name            string
 	Package         string
@@ -54,7 +49,6 @@ func (w Walker) Walk(root string) (*entityInfo, error) {
 }
 
 func (w Walker) collectGoFiles(root string) (map[string]string, error) {
-
 	goFiles := make(map[string]string)
 	err := filepath.Walk(root, w.visit(goFiles))
 	if err != nil {
@@ -90,13 +84,16 @@ func (w Walker) searchEntity(goFiles map[string]string) (*entityInfo, error) {
 }
 
 func (w Walker) canSearch(path string, info os.FileInfo) bool {
-	// TODO: refactor needed
-	return !info.IsDir() && filepath.Ext(info.Name()) == ".go" && !strings.Contains(path, "_test.go") && !w.isDirExcluded(path)
+	return !info.IsDir() && w.isGoFile(info.Name()) && !w.isDirExcluded(path)
+}
+
+func (w Walker) isGoFile(name string) bool {
+	return filepath.Ext(name) == ".go" && !strings.Contains(name, "_test.go")
 }
 
 func (w Walker) isEntity(content string) bool {
 	// TODO: improve determining of entity
-	return strings.Contains(content, fmt.Sprintf(entityPattern, w.entityName))
+	return strings.Contains(content, fmt.Sprintf(w.entityPattern, w.entityName))
 }
 
 func (w Walker) resolvePackageName(content string) string {
@@ -112,7 +109,7 @@ func (w Walker) resolveFullPackageName(path string) string {
 }
 
 func (w Walker) isDirExcluded(path string) bool {
-	for _, e := range excludedDirs {
+	for _, e := range w.excludedDirs {
 		if strings.Contains(path, e) {
 			return true
 		}

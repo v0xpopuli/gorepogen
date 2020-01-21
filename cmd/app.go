@@ -50,8 +50,7 @@ func buildFlags() []cli.Flag {
 
 func generate(_ *cli.Context) error {
 
-	err := checkArgs()
-	if err != nil {
+	if err := checkArgs(); err != nil {
 		return err
 	}
 
