@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	g "github.com/v0xpopuli/gorepogen/internal/generator"
 
@@ -15,7 +16,17 @@ var root string
 
 func main() {
 
-	app := &cli.App{
+	app := buildApp()
+	err := app.Run(os.Args)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+}
+
+func buildApp() *cli.App {
+	return &cli.App{
 		Name:      "gorepogen",
 		Usage:     "tool for repositories auto generation",
 		UsageText: "gorepogen [global options]",
@@ -42,13 +53,6 @@ func main() {
 		},
 		Action: generate,
 	}
-
-	err := app.Run(os.Args)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
 }
 
 func generate(_ *cli.Context) error {
@@ -61,7 +65,8 @@ func generate(_ *cli.Context) error {
 		return errors.New(`use "gorepogen -h" for help`)
 	}
 
-	entityInfo, err := g.Search(root, name)
+	walker := g.NewWalker(filepath.Base(root), name)
+	entityInfo, err := walker.Walk(root)
 	if err != nil {
 		return err
 	}
