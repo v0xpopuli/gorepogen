@@ -10,7 +10,29 @@ Simple Go tool, for repositories auto generation.
 
 #### **Usage**
 Use ```gorepogen -h``` for help
+```
+NAME:
+   gorepogen - tool for repositories auto generation
 
+USAGE:
+   gorepogen [global options]
+
+VERSION:
+   1.0.0
+
+AUTHOR:
+   v0xpopuli <vadim.rozhkalns@gmail.com>
+
+COMMANDS:
+   help, h  Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --name value, -n value  Entity name
+   --root value, -r value  Project root
+   --help, -h              show help (default: false)
+   --version, -v           print the version (default: false)
+```
+If arg ```-r``` or ```--root``` were not define, program take current directory path
 
 #### **Note**
 [GORM](https://github.com/jinzhu/gorm) was been used as ORM
