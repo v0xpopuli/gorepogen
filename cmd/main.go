@@ -16,7 +16,7 @@ var root string
 
 func main() {
 
-	app := buildApp()
+	app := createApp()
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)
@@ -25,33 +25,41 @@ func main() {
 
 }
 
-func buildApp() *cli.App {
+func createApp() *cli.App {
 	return &cli.App{
 		Name:      "gorepogen",
 		Usage:     "tool for repositories auto generation",
 		UsageText: "gorepogen [global options]",
 		Version:   "1.0.0",
-		Authors: []*cli.Author{
-			{
-				Name:  "v0xpopuli",
-				Email: "vadim.rozhkalns@gmail.com",
-			},
+		Authors:   buildAuthor(),
+		Flags:     buildFlags(),
+		Action:    generate,
+	}
+}
+
+func buildAuthor() []*cli.Author {
+	return []*cli.Author{
+		{
+			Name:  "v0xpopuli",
+			Email: "vadim.rozhkalns@gmail.com",
 		},
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:        "name",
-				Aliases:     []string{"n"},
-				Usage:       "Entity name",
-				Destination: &name,
-			},
-			&cli.StringFlag{
-				Name:        "root",
-				Aliases:     []string{"r"},
-				Usage:       "Project root",
-				Destination: &root,
-			},
+	}
+}
+
+func buildFlags() []cli.Flag {
+	return []cli.Flag{
+		&cli.StringFlag{
+			Name:        "name",
+			Aliases:     []string{"n"},
+			Usage:       "Entity name",
+			Destination: &name,
 		},
-		Action: generate,
+		&cli.StringFlag{
+			Name:        "root",
+			Aliases:     []string{"r"},
+			Usage:       "Project root",
+			Destination: &root,
+		},
 	}
 }
 

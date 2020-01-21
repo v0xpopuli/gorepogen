@@ -57,22 +57,6 @@ func TestSearch(t *testing.T) {
 
 }
 
-func Test_scanWords(t *testing.T) {
-
-	asrt := assert.New(t)
-	cd, _ := os.Getwd()
-
-	walker := NewWalker(
-		filepath.Base(cd),
-		"User",
-	)
-
-	filePath := filepath.Join(cd, "temp_1337.go")
-	actual := walker.scanWords(filePath)
-
-	asrt.Nil(actual)
-}
-
 func Test_isEntity(t *testing.T) {
 
 	asrt := assert.New(t)
@@ -84,18 +68,11 @@ func Test_isEntity(t *testing.T) {
 	)
 
 	t.Run("entity match", func(t *testing.T) {
-		words := []string{"type", "User", "struct"}
-		asrt.True(walker.isEntity(words, 1, words[1]))
+		asrt.True(walker.isEntity("package entity\n\ntype User struct {}"))
 	})
 
 	t.Run("entity not match", func(t *testing.T) {
-		words := []string{"//", " ", "User", "lorem", "ipsum"}
-		asrt.False(walker.isEntity(words, 1, words[1]))
-	})
-
-	t.Run("entity not match", func(t *testing.T) {
-		words := []string{"User", " ", ":", "=", " "}
-		asrt.False(walker.isEntity(words, 1, words[0]))
+		asrt.False(walker.isEntity("package entity\n\ntype Person struct {}"))
 	})
 
 }
