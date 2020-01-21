@@ -41,36 +41,53 @@ func NewWalker(projectDir, entityName string) *Walker {
 // from directory where program was ran
 func (w Walker) Walk(root string) (*entityInfo, error) {
 
-	var entityInfo entityInfo
-	err := filepath.Walk(root, w.search(&entityInfo))
+	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
 		return nil, err
 	}
-	if entityInfo.Package == "" {
-		return nil, errors.Errorf("can't find given entity: %s", w.entityName)
-	}
 
-	return &entityInfo, nil
+	entityInfo, err := w.searchEntity(goFiles)
+	if err != nil {
+		return nil, err
+	}
+	return entityInfo, nil
 }
 
-func (w Walker) search(entityInfo *entityInfo) filepath.WalkFunc {
+func (w Walker) collectGoFiles(root string) ([]string, error) {
+	var goFiles []string
+	err := filepath.Walk(root, w.visit(&goFiles))
+	if err != nil {
+		return nil, err
+	}
+	return goFiles, nil
+}
+
+func (w Walker) visit(goFiles *[]string) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 		if w.canSearch(path, info) {
-			words, _ := w.scanWords(path)
-			for index, word := range words {
-				if w.isEntity(words, index, word) {
-					entityInfo.Name = w.entityName
-					entityInfo.Package = words[1]
-					entityInfo.FullPackagePath = w.resolveFullPackageName(path)
-					return nil
-				}
-			}
+			*goFiles = append(*goFiles, path)
 		}
 		return nil
 	}
+}
+
+func (w Walker) searchEntity(goFiles []string) (*entityInfo, error) {
+	for _, gfPath := range goFiles {
+		words := w.scanWords(gfPath)
+		for index, word := range words {
+			if w.isEntity(words, index, word) {
+				return &entityInfo{
+					Name:            w.entityName,
+					Package:         words[1],
+					FullPackagePath: w.resolveFullPackageName(gfPath),
+				}, nil
+			}
+		}
+	}
+	return nil, errors.Errorf("can't find given entity: %s", w.entityName)
 }
 
 func (w Walker) canSearch(path string, info os.FileInfo) bool {
@@ -85,12 +102,9 @@ func (w Walker) isEntity(words []string, index int, word string) bool {
 	return false
 }
 
-func (w Walker) scanWords(path string) ([]string, error) {
+func (w Walker) scanWords(path string) []string {
 
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
+	file, _ := os.Open(path)
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
@@ -100,7 +114,7 @@ func (w Walker) scanWords(path string) ([]string, error) {
 	for scanner.Scan() {
 		words = append(words, scanner.Text())
 	}
-	return words, nil
+	return words
 }
 
 func (w Walker) resolveFullPackageName(path string) string {

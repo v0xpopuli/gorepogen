@@ -68,10 +68,9 @@ func Test_scanWords(t *testing.T) {
 	)
 
 	filePath := filepath.Join(cd, "temp_1337.go")
-	actual, err := walker.scanWords(filePath)
+	actual := walker.scanWords(filePath)
 
 	asrt.Nil(actual)
-	asrt.Error(err)
 }
 
 func Test_isEntity(t *testing.T) {

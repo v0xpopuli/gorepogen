@@ -62,7 +62,7 @@ func generate(_ *cli.Context) error {
 	}
 
 	if name == "" {
-		return errors.New(`use "gorepogen -h" for help`)
+		return errors.New(`Use "gorepogen -h" for help`)
 	}
 
 	walker := g.NewWalker(filepath.Base(root), name)
@@ -80,7 +80,7 @@ func generate(_ *cli.Context) error {
 	}
 
 	fmt.Printf(
-		"repository for %s generated successfully, location: %s\n",
+		"Repository for %s generated successfully, location: %s\n",
 		namesRegistry.EntityName,
 		repositoryFullPath,
 	)
