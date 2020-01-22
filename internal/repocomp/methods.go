@@ -5,12 +5,12 @@ import (
 )
 
 const (
-	findAllMethod  = "FindAll"
-	findByIdMethod = "FindById"
-	saveMethod     = "Save"
-	updateMethod   = "Update"
-	deleteMethod   = "Delete"
-	countMethod    = "Count"
+	findAllMethodName  = "FindAll"
+	findByIdMethodName = "FindById"
+	saveMethodName     = "Save"
+	updateMethodName   = "Update"
+	deleteMethodName   = "Delete"
+	countMethodName    = "Count"
 )
 
 var (
@@ -48,68 +48,12 @@ func NewMethodsList(receiverName, entityNameWithPackage string) Appender {
 		receiverName:          receiverName,
 		entityNameWithPackage: entityNameWithPackage,
 		methods: []method{
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   findAllMethod,
-				args:         nil,
-				returnParams: j.List(j.Index().Id(entityNameWithPackage), j.Error()),
-				fnBody:       findAllFuncBody(entityNameWithPackage),
-			},
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   findByIdMethod,
-				args: []statementPair{
-					{
-						ArgName: j.Id(idLit),
-						ArgType: j.Uint(),
-					},
-				},
-				returnParams: j.List(j.Id(entityNameWithPackage), j.Error()),
-				fnBody:       findByIdFuncBody(entityNameWithPackage),
-			},
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   saveMethod,
-				args: []statementPair{
-					{
-						ArgName: j.Id(entityLit),
-						ArgType: j.Id(entityNameWithPackage),
-					},
-				},
-				returnParams: j.List(j.Id(entityNameWithPackage), j.Error()),
-				fnBody:       saveFuncBody(),
-			},
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   updateMethod,
-				args: []statementPair{
-					{
-						ArgName: j.Id(entityLit),
-						ArgType: j.Id(entityNameWithPackage),
-					},
-				},
-				returnParams: j.Error(),
-				fnBody:       updateFuncBody(),
-			},
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   deleteMethod,
-				args: []statementPair{
-					{
-						ArgName: j.Id(entityLit),
-						ArgType: j.Id(entityNameWithPackage),
-					},
-				},
-				returnParams: j.Error(),
-				fnBody:       deleteFuncBody(),
-			},
-			{
-				receiverName: j.Id(receiverName),
-				methodName:   countMethod,
-				args:         nil,
-				returnParams: j.List(j.Uint(), j.Error()),
-				fnBody:       countFuncBody(entityNameWithPackage),
-			},
+			findAllMethod(receiverName, entityNameWithPackage),
+			findByIdMethod(receiverName, entityNameWithPackage),
+			saveMethod(receiverName, entityNameWithPackage),
+			updateMethod(receiverName, entityNameWithPackage),
+			deleteMethod(receiverName, entityNameWithPackage),
+			countMethod(receiverName, entityNameWithPackage),
 		},
 	}
 }

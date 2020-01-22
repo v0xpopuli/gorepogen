@@ -16,16 +16,21 @@ func TestSearch(t *testing.T) {
 	asrt := assert.New(t)
 	cd, _ := os.Getwd()
 
+	walker := NewWalker(
+		filepath.Base(cd),
+		"User",
+	)
+
 	t.Run("entity found", func(t *testing.T) {
 
 		filePath := testutil.CreateTempFile(t, cd, "package entity\n\ntype User struct {}")
 
-		expected := &entityInfo{
-			Name:            "User",
-			Package:         "entity",
+		expected := &EntityInfo{
+			EntityName:      "User",
+			EntityPackage:   "entity",
 			FullPackagePath: "generator",
 		}
-		actual, err := Search(cd, "User")
+		actual, err := walker.Walk(cd)
 
 		asrt.NoError(err)
 		asrt.Equal(expected, actual)
@@ -35,7 +40,7 @@ func TestSearch(t *testing.T) {
 
 	t.Run("entity not found", func(t *testing.T) {
 
-		actual, err := Search(cd, "User")
+		actual, err := walker.Walk(cd)
 
 		asrt.Nil(actual)
 		asrt.EqualError(err, "can't find given entity: User")
@@ -44,7 +49,7 @@ func TestSearch(t *testing.T) {
 	t.Run("entity not found", func(t *testing.T) {
 
 		dir := "dir/does/not/exists"
-		actual, err := Search(dir, "User")
+		actual, err := walker.Walk(dir)
 
 		asrt.Nil(actual)
 		asrt.EqualError(err, fmt.Sprintf("lstat %s: no such file or directory", dir))
@@ -52,36 +57,22 @@ func TestSearch(t *testing.T) {
 
 }
 
-func Test_scanWords(t *testing.T) {
-
-	asrt := assert.New(t)
-	cd, _ := os.Getwd()
-
-	filePath := filepath.Join(cd, "temp_1337.go")
-	actual, err := scanWords(filePath)
-
-	asrt.Nil(actual)
-	asrt.Error(err)
-}
-
 func Test_isEntity(t *testing.T) {
 
 	asrt := assert.New(t)
 	entityName := "User"
 
+	walker := NewWalker(
+		"",
+		entityName,
+	)
+
 	t.Run("entity match", func(t *testing.T) {
-		words := []string{"type", "User", "struct"}
-		asrt.True(isEntity(words, 1, words[1], entityName))
+		asrt.True(walker.isEntity("package entity\n\ntype User struct {}"))
 	})
 
 	t.Run("entity not match", func(t *testing.T) {
-		words := []string{"//", " ", "User", "lorem", "ipsum"}
-		asrt.False(isEntity(words, 1, words[1], entityName))
-	})
-
-	t.Run("entity not match", func(t *testing.T) {
-		words := []string{"User", " ", ":", "=", " "}
-		asrt.False(isEntity(words, 1, words[0], entityName))
+		asrt.False(walker.isEntity("package entity\n\ntype Person struct {}"))
 	})
 
 }
@@ -90,12 +81,17 @@ func Test_isDirExcluded(t *testing.T) {
 
 	asrt := assert.New(t)
 
+	walker := NewWalker(
+		"",
+		"",
+	)
+
 	t.Run("directory are not excluded", func(t *testing.T) {
-		asrt.True(!isDirExcluded("lorem/ipsum/dolor/"))
+		asrt.True(!walker.isDirExcluded("lorem/ipsum/dolor/"))
 	})
 
 	t.Run("directory is excluded", func(t *testing.T) {
-		asrt.False(!isDirExcluded("lorem/ipsum/.git/dolor/"))
+		asrt.False(!walker.isDirExcluded("lorem/ipsum/.git/dolor/"))
 	})
 
 }

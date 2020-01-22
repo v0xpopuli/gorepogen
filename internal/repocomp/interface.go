@@ -23,21 +23,21 @@ func (ig *interfaceGenerator) AppendTo(file *j.File) {
 	file.Type().
 		Id(ig.interfaceName).
 		Interface(
-			j.Id(findAllMethod).
+			j.Id(findAllMethodName).
 				Params().
 				Params(j.List(j.Index().Qual(ig.fullPackageName, ig.entityName), j.Error())),
-			j.Id(findByIdMethod).
+			j.Id(findByIdMethodName).
 				Params(j.Uint()).
 				Params(j.List(j.Qual(ig.fullPackageName, ig.entityName), j.Error())),
-			j.Id(saveMethod).
+			j.Id(saveMethodName).
 				Params(j.Qual(ig.fullPackageName, ig.entityName)).
 				Params(j.Qual(ig.fullPackageName, ig.entityName), j.Error()),
-			j.Id(updateMethod).
+			j.Id(updateMethodName).
 				Params(j.Qual(ig.fullPackageName, ig.entityName)).
 				Params(j.Error()),
-			j.Id(deleteMethod).
+			j.Id(deleteMethodName).
 				Params(j.Qual(ig.fullPackageName, ig.entityName)).Error(),
-			j.Id(countMethod).
+			j.Id(countMethodName).
 				Params().
 				Params(j.Uint(), j.Error()),
 		).

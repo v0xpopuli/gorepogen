@@ -5,31 +5,10 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/v0xpopuli/gorepogen/internal/repocomp"
 	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
 )
-
-func TestAssignNamesToComponents(t *testing.T) {
-
-	namesRegistry := NamesRegistry{
-		EntityName:            "User",
-		PackageName:           "entity",
-		FullPackageName:       "project/entity",
-		EntityNameWithPackage: "entity.User",
-		InterfaceName:         "UserRepository",
-		StructName:            "userRepository",
-		ConstructorName:       "NewUserRepository",
-		ReceiveName:           "r userRepository",
-		FileName:              "user_repository.go",
-		RepositoryPackageName: "repository",
-	}
-
-	components := AssignNamesToComponents(namesRegistry)
-	assert.NotNil(t, components)
-
-}
 
 func TestGenerate(t *testing.T) {
 
@@ -38,27 +17,20 @@ func TestGenerate(t *testing.T) {
 
 	expected := filepath.Join(cd, "repository", "user_repository.go")
 
-	namesRegistry := NamesRegistry{
-		EntityName:            "User",
-		PackageName:           "entity",
-		FullPackageName:       "project/entity",
-		EntityNameWithPackage: "entity.User",
-		InterfaceName:         "UserRepository",
-		StructName:            "userRepository",
-		ConstructorName:       "NewUserRepository",
-		ReceiveName:           "r userRepository",
-		FileName:              "user_repository.go",
-		RepositoryPackageName: "repository",
+	namesRegistry := NamesRegister{
+		entityName:            "User",
+		packageName:           "entity",
+		fullPackageName:       "project/entity",
+		entityNameWithPackage: "entity.User",
+		interfaceName:         "UserRepository",
+		structName:            "userRepository",
+		constructorName:       "NewUserRepository",
+		receiveName:           "r userRepository",
+		fileName:              "user_repository.go",
+		repositoryPackageName: "repository",
 	}
 
-	components := []repocomp.Appender{
-		repocomp.NewInterface(namesRegistry.GetInterfaceNames()),
-		repocomp.NewStruct(namesRegistry.GetStructNames()),
-		repocomp.NewConstructor(namesRegistry.GetConstructorNames()),
-		repocomp.NewMethodsList(namesRegistry.GetMethodListNames()),
-	}
-
-	actual, err := Generate(components, namesRegistry, cd)
+	actual, err := NewGenerator(namesRegistry).Generate(cd)
 	asrt.Nil(err)
 	asrt.Equal(expected, actual)
 
@@ -69,22 +41,22 @@ func TestResolveNamesRegistry(t *testing.T) {
 
 	asrt := assert.New(t)
 
-	expected := NamesRegistry{
-		EntityName:            "User",
-		PackageName:           "entity",
-		FullPackageName:       "project/entity",
-		EntityNameWithPackage: "entity.User",
-		InterfaceName:         "UserRepository",
-		StructName:            "userRepository",
-		ConstructorName:       "NewUserRepository",
-		ReceiveName:           "r userRepository",
-		FileName:              "user_repository.go",
-		RepositoryPackageName: "repository",
+	expected := NamesRegister{
+		entityName:            "User",
+		packageName:           "entity",
+		fullPackageName:       "project/entity",
+		entityNameWithPackage: "entity.User",
+		interfaceName:         "UserRepository",
+		structName:            "userRepository",
+		constructorName:       "NewUserRepository",
+		receiveName:           "r userRepository",
+		fileName:              "user_repository.go",
+		repositoryPackageName: "repository",
 	}
 
-	actual := CreateNamesRegistry(&entityInfo{
-		Name:            "User",
-		Package:         "entity",
+	actual := NewNamesRegister(&EntityInfo{
+		EntityName:      "User",
+		EntityPackage:   "entity",
 		FullPackagePath: "project/entity",
 	})
 

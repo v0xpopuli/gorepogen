@@ -1,8 +1,8 @@
 package generator
 
 import (
-	"bufio"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,94 +10,106 @@ import (
 	"github.com/pkg/errors"
 )
 
-var (
-	entityPattern = "type %s struct"
-	excludedDirs  = []string{".git", ".idea", ".vscode"}
-)
-
-type entityInfo struct {
-	Name            string
-	Package         string
+type EntityInfo struct {
+	EntityName      string
+	EntityPackage   string
 	FullPackagePath string
 }
 
-// Search searching for entity by given entity name
-// from directory where program was ran
-func Search(whereToSearch, entityName string) (*entityInfo, error) {
+type Walker struct {
+	projectDir    string
+	entityName    string
+	entityPattern string
+	excludedDirs  []string
+}
 
-	var entityInfo entityInfo
-	err := filepath.Walk(
-		whereToSearch,
-		search(filepath.Base(whereToSearch), entityName, &entityInfo),
-	)
+func NewWalker(projectDir, entityName string) *Walker {
+	return &Walker{
+		projectDir:    projectDir,
+		entityName:    entityName,
+		entityPattern: "type %s struct",
+		excludedDirs:  []string{".git", ".idea", ".vscode"},
+	}
+}
+
+// Walk searching for entity by given entity name
+// from directory where program was ran
+func (w Walker) Walk(root string) (*EntityInfo, error) {
+
+	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
 		return nil, err
 	}
-	if entityInfo.Package == "" {
-		return nil, errors.Errorf("can't find given entity: %s", entityName)
-	}
 
-	return &entityInfo, nil
+	entityInfo, err := w.searchEntity(goFiles)
+	if err != nil {
+		return nil, err
+	}
+	return entityInfo, nil
 }
 
-func search(projectDir, entityName string, entityInfo *entityInfo) filepath.WalkFunc {
+func (w Walker) collectGoFiles(root string) (map[string]string, error) {
+	goFiles := make(map[string]string)
+	err := filepath.Walk(root, w.visit(goFiles))
+	if err != nil {
+		return nil, err
+	}
+	return goFiles, nil
+}
+
+func (w Walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if canSearch(path, info) {
-			words, _ := scanWords(path)
-			for index, word := range words {
-				if isEntity(words, index, word, entityName) {
-					entityInfo.Name = entityName
-					entityInfo.Package = words[1]
-					entityInfo.FullPackagePath = resolveFullPackageName(path, projectDir)
-					return nil
-				}
-			}
+		if w.canSearch(path, info) {
+			content, _ := ioutil.ReadFile(path)
+			goFiles[path] = string(content)
 		}
 		return nil
 	}
 }
 
-func canSearch(path string, info os.FileInfo) bool {
-	return !info.IsDir() && filepath.Ext(info.Name()) == ".go" && !isDirExcluded(path)
+func (w Walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
+	for path, content := range goFiles {
+		if w.isEntity(content) {
+			return &EntityInfo{
+				EntityName:      w.entityName,
+				EntityPackage:   w.resolvePackageName(content),
+				FullPackagePath: w.resolveFullPackageName(path),
+			}, nil
+		}
+	}
+	return nil, errors.Errorf("can't find given entity: %s", w.entityName)
 }
 
-func isEntity(words []string, index int, word, entityName string) bool {
-	if index >= 1 && index < len(words)-1 {
-		signature := []string{words[index-1], word, words[index+1]}
-		return fmt.Sprintf(entityPattern, entityName) == strings.Join(signature, " ")
-	}
-	return false
+func (w Walker) canSearch(path string, info os.FileInfo) bool {
+	return !info.IsDir() && w.isGoFile(info.Name()) && !w.isDirExcluded(path)
 }
 
-func scanWords(path string) ([]string, error) {
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	scanner.Split(bufio.ScanWords)
-
-	var words []string
-	for scanner.Scan() {
-		words = append(words, scanner.Text())
-	}
-	return words, nil
+func (w Walker) isGoFile(name string) bool {
+	return filepath.Ext(name) == ".go" && !strings.Contains(name, "_test.go")
 }
 
-func resolveFullPackageName(path string, projectDir string) string {
+func (w Walker) isEntity(content string) bool {
+	// TODO: improve determining of entity
+	return strings.Contains(content, fmt.Sprintf(w.entityPattern, w.entityName))
+}
+
+func (w Walker) resolvePackageName(content string) string {
+	trimmed := strings.TrimSuffix(content, "\n")
+	splitted := strings.Split(trimmed, "\n")[0]
+	return strings.Split(splitted, " ")[1]
+}
+
+func (w Walker) resolveFullPackageName(path string) string {
 	dir := filepath.Dir(path)
-	fullPackageName := dir[strings.Index(dir, projectDir):]
+	fullPackageName := dir[strings.Index(dir, w.projectDir):]
 	return strings.Replace(fullPackageName, "\\", "/", -1)
 }
 
-func isDirExcluded(path string) bool {
-	for _, e := range excludedDirs {
+func (w Walker) isDirExcluded(path string) bool {
+	for _, e := range w.excludedDirs {
 		if strings.Contains(path, e) {
 			return true
 		}
