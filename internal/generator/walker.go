@@ -10,21 +10,23 @@ import (
 	"github.com/pkg/errors"
 )
 
+// EntityInfo hold all information needed to build NameRegister
 type EntityInfo struct {
 	EntityName      string
 	EntityPackage   string
 	FullPackagePath string
 }
 
-type Walker struct {
+type walker struct {
 	projectDir    string
 	entityName    string
 	entityPattern string
 	excludedDirs  []string
 }
 
-func NewWalker(projectDir, entityName string) *Walker {
-	return &Walker{
+// NewWalker make new instance of walker
+func NewWalker(projectDir, entityName string) *walker {
+	return &walker{
 		projectDir:    projectDir,
 		entityName:    entityName,
 		entityPattern: "type %s struct",
@@ -34,7 +36,7 @@ func NewWalker(projectDir, entityName string) *Walker {
 
 // Walk searching for entity by given entity name
 // from directory where program was ran
-func (w Walker) Walk(root string) (*EntityInfo, error) {
+func (w walker) Walk(root string) (*EntityInfo, error) {
 
 	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
@@ -48,7 +50,7 @@ func (w Walker) Walk(root string) (*EntityInfo, error) {
 	return entityInfo, nil
 }
 
-func (w Walker) collectGoFiles(root string) (map[string]string, error) {
+func (w walker) collectGoFiles(root string) (map[string]string, error) {
 	goFiles := make(map[string]string)
 	err := filepath.Walk(root, w.visit(goFiles))
 	if err != nil {
@@ -57,7 +59,7 @@ func (w Walker) collectGoFiles(root string) (map[string]string, error) {
 	return goFiles, nil
 }
 
-func (w Walker) visit(goFiles map[string]string) filepath.WalkFunc {
+func (w walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	return func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -70,7 +72,7 @@ func (w Walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	}
 }
 
-func (w Walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
+func (w walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
 	for path, content := range goFiles {
 		if w.isEntity(content) {
 			return &EntityInfo{
@@ -83,32 +85,32 @@ func (w Walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
 	return nil, errors.Errorf("can't find given entity: %s", w.entityName)
 }
 
-func (w Walker) canSearch(path string, info os.FileInfo) bool {
+func (w walker) canSearch(path string, info os.FileInfo) bool {
 	return !info.IsDir() && w.isGoFile(info.Name()) && !w.isDirExcluded(path)
 }
 
-func (w Walker) isGoFile(name string) bool {
+func (w walker) isGoFile(name string) bool {
 	return filepath.Ext(name) == ".go" && !strings.Contains(name, "_test.go")
 }
 
-func (w Walker) isEntity(content string) bool {
+func (w walker) isEntity(content string) bool {
 	// TODO: improve determining of entity
 	return strings.Contains(content, fmt.Sprintf(w.entityPattern, w.entityName))
 }
 
-func (w Walker) resolvePackageName(content string) string {
+func (w walker) resolvePackageName(content string) string {
 	trimmed := strings.TrimSuffix(content, "\n")
 	splitted := strings.Split(trimmed, "\n")[0]
 	return strings.Split(splitted, " ")[1]
 }
 
-func (w Walker) resolveFullPackageName(path string) string {
+func (w walker) resolveFullPackageName(path string) string {
 	dir := filepath.Dir(path)
 	fullPackageName := dir[strings.Index(dir, w.projectDir):]
 	return strings.Replace(fullPackageName, "\\", "/", -1)
 }
 
-func (w Walker) isDirExcluded(path string) bool {
+func (w walker) isDirExcluded(path string) bool {
 	for _, e := range w.excludedDirs {
 		if strings.Contains(path, e) {
 			return true
