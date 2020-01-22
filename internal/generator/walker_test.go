@@ -25,9 +25,9 @@ func TestSearch(t *testing.T) {
 
 		filePath := testutil.CreateTempFile(t, cd, "package entity\n\ntype User struct {}")
 
-		expected := &entityInfo{
-			Name:            "User",
-			Package:         "entity",
+		expected := &EntityInfo{
+			EntityName:      "User",
+			EntityPackage:   "entity",
 			FullPackagePath: "generator",
 		}
 		actual, err := walker.Walk(cd)

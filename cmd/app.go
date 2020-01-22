@@ -59,18 +59,12 @@ func generate(_ *cli.Context) error {
 		return err
 	}
 
-	namesRegistry := g.CreateNamesRegistry(entityInfo)
-	repositoryFullPath, err := g.NewGenerator(namesRegistry).Generate(root)
+	repositoryFullPath, err := g.NewGenerator(g.NewNamesRegister(entityInfo)).Generate(root)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf(
-		"Repository for %s generated successfully, location: %s\n",
-		namesRegistry.EntityName,
-		repositoryFullPath,
-	)
-
+	fmt.Println(createResultMessage(entityInfo, repositoryFullPath))
 	return nil
 }
 
@@ -83,4 +77,12 @@ func checkArgs() error {
 		return errors.New(`Use "gorepogen -h" for help`)
 	}
 	return nil
+}
+
+func createResultMessage(entityInfo *g.EntityInfo, repositoryFullPath string) string {
+	return fmt.Sprintf(
+		"Repository for %s generated successfully, location: %s\n",
+		entityInfo.FullPackagePath,
+		repositoryFullPath,
+	)
 }

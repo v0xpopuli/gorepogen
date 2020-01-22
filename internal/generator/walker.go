@@ -10,9 +10,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-type entityInfo struct {
-	Name            string
-	Package         string
+type EntityInfo struct {
+	EntityName      string
+	EntityPackage   string
 	FullPackagePath string
 }
 
@@ -34,7 +34,7 @@ func NewWalker(projectDir, entityName string) *Walker {
 
 // Walk searching for entity by given entity name
 // from directory where program was ran
-func (w Walker) Walk(root string) (*entityInfo, error) {
+func (w Walker) Walk(root string) (*EntityInfo, error) {
 
 	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
@@ -70,12 +70,12 @@ func (w Walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	}
 }
 
-func (w Walker) searchEntity(goFiles map[string]string) (*entityInfo, error) {
+func (w Walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
 	for path, content := range goFiles {
 		if w.isEntity(content) {
-			return &entityInfo{
-				Name:            w.entityName,
-				Package:         w.resolvePackageName(content),
+			return &EntityInfo{
+				EntityName:      w.entityName,
+				EntityPackage:   w.resolvePackageName(content),
 				FullPackagePath: w.resolveFullPackageName(path),
 			}, nil
 		}
