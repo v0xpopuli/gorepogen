@@ -64,7 +64,7 @@ func generate(_ *cli.Context) error {
 		return err
 	}
 
-	fmt.Println(createResultMessage(entityInfo, repositoryFullPath))
+	fmt.Println(createResultMessage(entityInfo.EntityName, repositoryFullPath))
 	return nil
 }
 
@@ -79,10 +79,10 @@ func checkArgs() error {
 	return nil
 }
 
-func createResultMessage(entityInfo *g.EntityInfo, repositoryFullPath string) string {
+func createResultMessage(entityName, repositoryFullPath string) string {
 	return fmt.Sprintf(
 		"Repository for %s generated successfully, location: %s\n",
-		entityInfo.FullPackagePath,
+		entityName,
 		repositoryFullPath,
 	)
 }
