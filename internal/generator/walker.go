@@ -82,7 +82,7 @@ func (w walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
 			}, nil
 		}
 	}
-	return nil, errors.Errorf("can't find given entity: %s", w.entityName)
+	return nil, errors.Errorf("Can't find given entity: %s", w.entityName)
 }
 
 func (w walker) canSearch(path string, info os.FileInfo) bool {
