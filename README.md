@@ -6,7 +6,7 @@ Simple Go tool, for repositories auto generation.
 
 
 #### **Installation**
-```go get -u -v github.com/v0xpopuli/gorepogen```, then from downloaded ```go build -o $GOPATH/bin/gorepogen```
+```go get -u -v github.com/v0xpopuli/gorepogen/.../```, then from downloaded ```go build -o $GOPATH/bin/gorepogen```
 
 
 #### **Usage**
