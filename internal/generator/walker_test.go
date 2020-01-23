@@ -43,7 +43,7 @@ func TestSearch(t *testing.T) {
 		actual, err := walker.Walk(cd)
 
 		asrt.Nil(actual)
-		asrt.EqualError(err, "can't find given entity: User")
+		asrt.EqualError(err, "Can't find given entity: User")
 	})
 
 	t.Run("entity not found", func(t *testing.T) {
