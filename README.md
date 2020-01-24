@@ -36,5 +36,5 @@ GLOBAL OPTIONS:
 If arg ```-r``` or ```--root``` were not define, program take current directory path
 
 #### **Note**
-[GORM](https://github.com/jinzhu/gorm) was been used as ORM
+[GORM](https://github.com/jinzhu/gorm) are used as ORM
 
