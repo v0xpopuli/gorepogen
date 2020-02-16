@@ -17,8 +17,15 @@ func createApp() *cli.App {
 		UsageText: "gorepogen [global options]",
 		Version:   "1.0.0",
 		Authors:   buildAuthor(),
-		Flags:     buildFlags(),
-		Action:    generate,
+		Commands: []*cli.Command{
+			{
+				Name:    "gen",
+				Aliases: []string{"g"},
+				Usage:   "generate repository from entity name",
+				Flags:   buildFlags(),
+				Action:  generate,
+			},
+		},
 	}
 }
 
