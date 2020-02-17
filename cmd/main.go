@@ -5,9 +5,6 @@ import (
 	"os"
 )
 
-var name string
-var root string
-
 func main() {
 
 	app := createApp()
