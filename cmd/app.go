@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/urfave/cli/v2"
-	"github.com/v0xpopuli/gorepogen/cmd/command"
+	"github.com/v0xpopuli/gorepogen/internal/command"
 )
 
 func createApp() *cli.App {
@@ -13,8 +13,8 @@ func createApp() *cli.App {
 		Version:   "1.0.0",
 		Authors:   getAuthor(),
 		Commands: []*cli.Command{
-			command.GenerateRepositoryFromEntity(),
-			command.GenerateRepositoriesFromDatabase(),
+			command.NewGenerateFromEntity().CreateCommand(),
+			command.NewGenerateFromDatabase().CreateCommand(),
 		},
 	}
 }
