@@ -12,10 +12,7 @@ func createApp() *cli.App {
 		UsageText: "gorepogen [global options]",
 		Version:   "1.0.0",
 		Authors:   getAuthor(),
-		Commands: []*cli.Command{
-			command.NewGenerateFromEntity().CreateCommand(),
-			command.NewGenerateFromDatabase().CreateCommand(),
-		},
+		Commands:  getCommands(),
 	}
 }
 
@@ -25,5 +22,12 @@ func getAuthor() []*cli.Author {
 			Name:  "v0xpopuli",
 			Email: "vadim.rozhkalns@gmail.com",
 		},
+	}
+}
+
+func getCommands() []*cli.Command {
+	return []*cli.Command{
+		command.NewGenerateFromEntity().CreateCommand(),
+		command.NewGenerateFromDatabase().CreateCommand(),
 	}
 }

@@ -10,6 +10,8 @@ import (
 	gen "github.com/v0xpopuli/gorepogen/internal/generator"
 )
 
+var ErrGenHelp = errors.New(`Use "gorepogen -h" for help`)
+
 var (
 	name, root string
 )
@@ -22,10 +24,11 @@ func NewGenerateFromEntity() GenerateCommand {
 
 func (g generateFromEntity) CreateCommand() *cli.Command {
 	return &cli.Command{
-		Name:   "gen",
-		Usage:  "generate repository from entity name",
-		Flags:  g.buildFlags(),
-		Action: g.generate,
+		Name:    "gen",
+		Aliases: []string{"g"},
+		Usage:   "generate repository from entity name",
+		Flags:   g.buildFlags(),
+		Action:  g.generate,
 	}
 }
 
@@ -75,7 +78,7 @@ func (g generateFromEntity) checkArgs() error {
 	}
 
 	if name == "" {
-		return errors.New(`Use "gorepogen -h" for help`)
+		return ErrGenHelp
 	}
 	return nil
 }

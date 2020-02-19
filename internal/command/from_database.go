@@ -1,8 +1,11 @@
 package command
 
 import (
+	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 )
+
+var ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
 
 var (
 	driver, username, password, host, port, dbName string
@@ -16,10 +19,11 @@ func NewGenerateFromDatabase() GenerateCommand {
 
 func (g generateFromDatabase) CreateCommand() *cli.Command {
 	return &cli.Command{
-		Name:   "gendb",
-		Usage:  "generate repositories from database",
-		Flags:  g.buildFlags(),
-		Action: g.generate,
+		Name:    "gendb",
+		Aliases: []string{"gd"},
+		Usage:   "generate repositories from database",
+		Flags:   g.buildFlags(),
+		Action:  g.generate,
 	}
 }
 
@@ -69,5 +73,8 @@ func (generateFromDatabase) buildFlags() []cli.Flag {
 }
 
 func (g generateFromDatabase) checkArgs() error {
+	if driver == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" {
+		return ErrGenDBHelp
+	}
 	return nil
 }
