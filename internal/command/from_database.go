@@ -28,6 +28,7 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 }
 
 func (g generateFromDatabase) generate(*cli.Context) error {
+	// create map with mysql and postgres drivers
 	return nil
 }
 
