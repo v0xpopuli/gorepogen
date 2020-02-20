@@ -1,8 +1,6 @@
 package command
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	"github.com/v0xpopuli/gorepogen/internal/driver"
@@ -37,13 +35,10 @@ func (g generateFromDatabase) generate(*cli.Context) error {
 	}
 
 	// TODO: reminder - pass driver to generator
-	drv, err := driver.Get(g.getDbInfo())
+	_, err := driver.Get(g.getDbInfo())
 	if err != nil {
 		return err
 	}
-
-	tables, err := drv.FindAllTables()
-	fmt.Println(tables, err)
 
 	return nil
 }
