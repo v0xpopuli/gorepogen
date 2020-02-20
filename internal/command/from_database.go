@@ -1,13 +1,15 @@
 package command
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	"github.com/v0xpopuli/gorepogen/internal/driver"
 )
 
 var (
-	drvName, username, password, host, port, dbName string
+	drvName, username, password, host, port, dbName, schema string
 
 	ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
 )
@@ -29,11 +31,19 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 }
 
 func (g generateFromDatabase) generate(*cli.Context) error {
+
+	if err := g.checkArgs(); err != nil {
+		return err
+	}
+
 	// TODO: reminder - pass driver to generator
-	_, err := driver.Get(g.getDbInfo())
+	drv, err := driver.Get(g.getDbInfo())
 	if err != nil {
 		return err
 	}
+
+	tables, err := drv.FindAllTables()
+	fmt.Println(tables, err)
 
 	return nil
 }
@@ -76,11 +86,17 @@ func (generateFromDatabase) buildFlags() []cli.Flag {
 			Usage:       "Database name",
 			Destination: &dbName,
 		},
+		&cli.StringFlag{
+			Name:        "schema",
+			Aliases:     []string{"sc"},
+			Usage:       "Schema name",
+			Destination: &schema,
+		},
 	}
 }
 
 func (g generateFromDatabase) checkArgs() error {
-	if drvName == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" {
+	if drvName == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" || schema == "" {
 		return ErrGenDBHelp
 	}
 	return nil
@@ -88,6 +104,7 @@ func (g generateFromDatabase) checkArgs() error {
 
 func (g generateFromDatabase) getDbInfo() *driver.DatabaseInfo {
 	return &driver.DatabaseInfo{
+		SchemaName:   schema,
 		DriverName:   drvName,
 		Username:     username,
 		Password:     password,

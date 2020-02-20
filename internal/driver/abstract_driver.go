@@ -25,6 +25,7 @@ type DatabaseInfo struct {
 	Host         string
 	Port         string
 	DatabaseName string
+	SchemaName   string
 }
 
 type TableInfo struct {

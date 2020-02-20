@@ -29,7 +29,6 @@ func (d postgresDriver) openConnection() (*gorm.DB, error) {
 }
 
 func (d postgresDriver) FindAllTables() ([]TableInfo, error) {
-
 	conn, err := d.openConnection()
 	if err != nil {
 		return nil, err
@@ -39,7 +38,7 @@ func (d postgresDriver) FindAllTables() ([]TableInfo, error) {
 	err = conn.
 		Table("information_schema.columns").
 		Select("table_name, column_name, data_type").
-		Where("table_schema = ?", "public").
+		Where("table_schema = ?", d.SchemaName).
 		Scan(&tables).
 		Error
 	if err != nil {
