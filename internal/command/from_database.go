@@ -3,12 +3,15 @@ package command
 import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
+	"github.com/v0xpopuli/gorepogen/internal/driver"
 )
 
-var ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
-
 var (
-	driver, username, password, host, port, dbName string
+	drvName, username, password, host, port, dbName string
+
+	ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
+
+	driverMap map[string]driver.AbstractDriver
 )
 
 type generateFromDatabase struct{}
@@ -28,17 +31,22 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 }
 
 func (g generateFromDatabase) generate(*cli.Context) error {
-	// create map with mysql and postgres drivers
+	// pseudo code yet
+	driver, ok := driverMap[drvName]
+	if !ok {
+		return errors.New("err")
+	}
+
 	return nil
 }
 
 func (generateFromDatabase) buildFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:        "driver",
+			Name:        "drvName",
 			Aliases:     []string{"dr"},
 			Usage:       "Driver name (mysql or postgres)",
-			Destination: &driver,
+			Destination: &drvName,
 		},
 		&cli.StringFlag{
 			Name:        "username",
@@ -74,7 +82,7 @@ func (generateFromDatabase) buildFlags() []cli.Flag {
 }
 
 func (g generateFromDatabase) checkArgs() error {
-	if driver == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" {
+	if drvName == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" {
 		return ErrGenDBHelp
 	}
 	return nil

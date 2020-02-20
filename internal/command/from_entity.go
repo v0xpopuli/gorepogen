@@ -8,6 +8,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	gen "github.com/v0xpopuli/gorepogen/internal/generator"
+	"github.com/v0xpopuli/gorepogen/internal/generator/repository"
 )
 
 var ErrGenHelp = errors.New(`Use "gorepogen -h" for help`)
@@ -42,7 +43,7 @@ func (g generateFromEntity) generate(*cli.Context) error {
 		return err
 	}
 
-	repositoryFullPath, err := gen.NewGenerator(gen.NewNamesRegister(entityInfo)).Generate(root)
+	repositoryFullPath, err := repository.NewGenerator(gen.NewNamesRegister(entityInfo)).Generate(root)
 	if err != nil {
 		return err
 	}

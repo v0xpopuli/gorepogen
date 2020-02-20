@@ -1,10 +1,11 @@
-package generator
+package repository
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
+	generator2 "github.com/v0xpopuli/gorepogen/internal/generator"
 	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
@@ -17,7 +18,7 @@ func TestGenerate(t *testing.T) {
 
 	expected := filepath.Join(cd, "repository", "user_repository.go")
 
-	namesRegistry := NamesRegister{
+	namesRegistry := generator2.NamesRegister{
 		entityName:            "User",
 		packageName:           "entity",
 		fullPackageName:       "project/entity",
@@ -41,7 +42,7 @@ func TestResolveNamesRegistry(t *testing.T) {
 
 	asrt := assert.New(t)
 
-	expected := NamesRegister{
+	expected := generator2.NamesRegister{
 		entityName:            "User",
 		packageName:           "entity",
 		fullPackageName:       "project/entity",
@@ -54,7 +55,7 @@ func TestResolveNamesRegistry(t *testing.T) {
 		repositoryPackageName: "repository",
 	}
 
-	actual := NewNamesRegister(&EntityInfo{
+	actual := generator2.NewNamesRegister(&generator2.EntityInfo{
 		EntityName:      "User",
 		EntityPackage:   "entity",
 		FullPackagePath: "project/entity",

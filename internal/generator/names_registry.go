@@ -8,16 +8,16 @@ import (
 // NamesRegister provides all existing names
 // needed for auto generation
 type NamesRegister struct {
-	entityName            string
-	packageName           string
-	fullPackageName       string
-	entityNameWithPackage string
-	interfaceName         string
-	structName            string
-	constructorName       string
-	receiveName           string
-	fileName              string
-	repositoryPackageName string
+	EntityName            string
+	PackageName           string
+	FullPackageName       string
+	EntityNameWithPackage string
+	InterfaceName         string
+	StructName            string
+	ConstructorName       string
+	ReceiveName           string
+	FileName              string
+	RepositoryPackageName string
 }
 
 // NewNamesRegister build full list of needed names
@@ -26,35 +26,35 @@ func NewNamesRegister(entityInfo *EntityInfo) NamesRegister {
 	entityNameUncapitalized := strings.ToLower(entityInfo.EntityName)
 	entityName := entityInfo.EntityName
 	return NamesRegister{
-		entityName:            entityName,
-		packageName:           entityInfo.EntityPackage,
-		fullPackageName:       entityInfo.FullPackagePath,
-		entityNameWithPackage: fmt.Sprintf("%s.%s", entityInfo.EntityPackage, entityName),
-		interfaceName:         fmt.Sprintf("%sRepository", entityName),
-		constructorName:       fmt.Sprintf("New%sRepository", entityName),
-		structName:            fmt.Sprintf("%sRepository", entityNameUncapitalized),
-		receiveName:           fmt.Sprintf("r %sRepository", entityNameUncapitalized),
-		fileName:              fmt.Sprintf("%s_repository.go", entityNameUncapitalized),
-		repositoryPackageName: "repository",
+		EntityName:            entityName,
+		PackageName:           entityInfo.EntityPackage,
+		FullPackageName:       entityInfo.FullPackagePath,
+		EntityNameWithPackage: fmt.Sprintf("%s.%s", entityInfo.EntityPackage, entityName),
+		InterfaceName:         fmt.Sprintf("%sRepository", entityName),
+		ConstructorName:       fmt.Sprintf("New%sRepository", entityName),
+		StructName:            fmt.Sprintf("%sRepository", entityNameUncapitalized),
+		ReceiveName:           fmt.Sprintf("r %sRepository", entityNameUncapitalized),
+		FileName:              fmt.Sprintf("%s_repository.go", entityNameUncapitalized),
+		RepositoryPackageName: "repository",
 	}
 }
 
 // GetInterfaceNames returns all names belongs to interface block
 func (nr *NamesRegister) GetInterfaceNames() (string, string, string) {
-	return nr.interfaceName, nr.entityName, nr.fullPackageName
+	return nr.InterfaceName, nr.EntityName, nr.FullPackageName
 }
 
 // GetStructNames returns all names belongs to struct block
 func (nr *NamesRegister) GetStructNames() string {
-	return nr.structName
+	return nr.StructName
 }
 
 // GetConstructorNames returns all names belongs to constructor block
 func (nr *NamesRegister) GetConstructorNames() (string, string, string) {
-	return nr.constructorName, nr.interfaceName, nr.structName
+	return nr.ConstructorName, nr.InterfaceName, nr.StructName
 }
 
 // GetMethodListNames returns all names belongs to method list
 func (nr *NamesRegister) GetMethodListNames() (string, string) {
-	return nr.receiveName, nr.entityNameWithPackage
+	return nr.ReceiveName, nr.EntityNameWithPackage
 }
