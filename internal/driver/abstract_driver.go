@@ -14,9 +14,8 @@ const (
 )
 
 type AbstractDriver interface {
-	openConnection() *gorm.DB
-	SelectAllTableNames() ([]string, error)
-	SelectColumnsByTableName(string)
+	openConnection() (*gorm.DB, error)
+	FindAllTables() ([]TableInfo, error)
 }
 
 type DatabaseInfo struct {
@@ -26,6 +25,12 @@ type DatabaseInfo struct {
 	Host         string
 	Port         string
 	DatabaseName string
+}
+
+type TableInfo struct {
+	TableName  string
+	ColumnName string
+	DataType   string
 }
 
 func Get(info *DatabaseInfo) (AbstractDriver, error) {

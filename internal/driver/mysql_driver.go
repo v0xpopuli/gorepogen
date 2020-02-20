@@ -1,6 +1,8 @@
 package driver
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -14,14 +16,18 @@ func NewMysqlDriver(info *DatabaseInfo) AbstractDriver {
 	}
 }
 
-func (d mysqlDriver) openConnection() *gorm.DB {
-	panic("implement me")
+func (d mysqlDriver) openConnection() (*gorm.DB, error) {
+	return gorm.Open(d.DriverName, fmt.Sprintf(
+		"%s:%s@(%s:%s)/%s?multiStatements=true",
+		d.Username,
+		d.Password,
+		d.Host,
+		d.Port,
+		d.DatabaseName,
+	))
 }
 
-func (d mysqlDriver) SelectAllTableNames() ([]string, error) {
-	panic("implement me")
-}
-
-func (d mysqlDriver) SelectColumnsByTableName(string) {
+func (d mysqlDriver) FindAllTables() ([]TableInfo, error) {
+	// TODO: implement and test MySQL part
 	panic("implement me")
 }

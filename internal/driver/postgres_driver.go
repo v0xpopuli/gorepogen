@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type postgresDriver struct {
@@ -16,27 +17,34 @@ func NewPostgresDriver(info *DatabaseInfo) AbstractDriver {
 	}
 }
 
-func (d postgresDriver) openConnection() *gorm.DB {
-	return nil
+func (d postgresDriver) openConnection() (*gorm.DB, error) {
+	return gorm.Open(d.DriverName, fmt.Sprintf(
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
+		d.Host,
+		d.Port,
+		d.Username,
+		d.DatabaseName,
+		d.Password,
+	))
 }
 
-func (d postgresDriver) SelectAllTableNames() (tableNames []string, err error) {
-	return tableNames, d.openConnection().
-		Table("information_schema.tables ").
-		Select("table_name").
+func (d postgresDriver) FindAllTables() ([]TableInfo, error) {
+
+	conn, err := d.openConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	var tables []TableInfo
+	err = conn.
+		Table("information_schema.columns").
+		Select("table_name, column_name, data_type").
 		Where("table_schema = ?", "public").
-		Scan(&tableNames).
+		Scan(&tables).
 		Error
-}
+	if err != nil {
+		return nil, err
+	}
 
-func (d postgresDriver) SelectColumnsByTableName(tableName string) {
-
-}
-
-func (d postgresDriver) selectColumnsByTableName(tableName string) string {
-	return fmt.Sprintf(
-		`select table_name, column_name, data_type 
-                  from information_schema.columns 
-				  where table_schema = 'public' and table_name = '%s'`, tableName,
-	)
+	return tables, nil
 }

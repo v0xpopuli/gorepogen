@@ -10,8 +10,6 @@ var (
 	drvName, username, password, host, port, dbName string
 
 	ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
-
-	driverMap map[string]driver.AbstractDriver
 )
 
 type generateFromDatabase struct{}
@@ -31,14 +29,8 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 }
 
 func (g generateFromDatabase) generate(*cli.Context) error {
-	_, err := driver.Get(&driver.DatabaseInfo{
-		DriverName:   drvName,
-		Username:     username,
-		Password:     password,
-		Host:         host,
-		Port:         port,
-		DatabaseName: dbName,
-	})
+	// TODO: reminder - pass driver to generator
+	_, err := driver.Get(g.getDbInfo())
 	if err != nil {
 		return err
 	}
@@ -92,4 +84,15 @@ func (g generateFromDatabase) checkArgs() error {
 		return ErrGenDBHelp
 	}
 	return nil
+}
+
+func (g generateFromDatabase) getDbInfo() *driver.DatabaseInfo {
+	return &driver.DatabaseInfo{
+		DriverName:   drvName,
+		Username:     username,
+		Password:     password,
+		Host:         host,
+		Port:         port,
+		DatabaseName: dbName,
+	}
 }
