@@ -31,10 +31,16 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 }
 
 func (g generateFromDatabase) generate(*cli.Context) error {
-	// pseudo code yet
-	driver, ok := driverMap[drvName]
-	if !ok {
-		return errors.New("err")
+	_, err := driver.Get(&driver.DatabaseInfo{
+		DriverName:   drvName,
+		Username:     username,
+		Password:     password,
+		Host:         host,
+		Port:         port,
+		DatabaseName: dbName,
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil
