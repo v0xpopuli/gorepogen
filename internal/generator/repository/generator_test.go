@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	generator2 "github.com/v0xpopuli/gorepogen/internal/generator"
+	g "github.com/v0xpopuli/gorepogen/internal/generator"
 	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"
@@ -18,17 +18,17 @@ func TestGenerate(t *testing.T) {
 
 	expected := filepath.Join(cd, "repository", "user_repository.go")
 
-	namesRegistry := generator2.NamesRegister{
-		entityName:            "User",
-		packageName:           "entity",
-		fullPackageName:       "project/entity",
-		entityNameWithPackage: "entity.User",
-		interfaceName:         "UserRepository",
-		structName:            "userRepository",
-		constructorName:       "NewUserRepository",
-		receiveName:           "r userRepository",
-		fileName:              "user_repository.go",
-		repositoryPackageName: "repository",
+	namesRegistry := g.NamesRegister{
+		EntityName:            "User",
+		PackageName:           "entity",
+		FullPackageName:       "project/entity",
+		EntityNameWithPackage: "entity.User",
+		InterfaceName:         "UserRepository",
+		StructName:            "userRepository",
+		ConstructorName:       "NewUserRepository",
+		ReceiveName:           "r userRepository",
+		FileName:              "user_repository.go",
+		RepositoryPackageName: "repository",
 	}
 
 	actual, err := NewGenerator(namesRegistry).Generate(cd)
@@ -42,20 +42,20 @@ func TestResolveNamesRegistry(t *testing.T) {
 
 	asrt := assert.New(t)
 
-	expected := generator2.NamesRegister{
-		entityName:            "User",
-		packageName:           "entity",
-		fullPackageName:       "project/entity",
-		entityNameWithPackage: "entity.User",
-		interfaceName:         "UserRepository",
-		structName:            "userRepository",
-		constructorName:       "NewUserRepository",
-		receiveName:           "r userRepository",
-		fileName:              "user_repository.go",
-		repositoryPackageName: "repository",
+	expected := g.NamesRegister{
+		EntityName:            "User",
+		PackageName:           "entity",
+		FullPackageName:       "project/entity",
+		EntityNameWithPackage: "entity.User",
+		InterfaceName:         "UserRepository",
+		StructName:            "userRepository",
+		ConstructorName:       "NewUserRepository",
+		ReceiveName:           "r userRepository",
+		FileName:              "user_repository.go",
+		RepositoryPackageName: "repository",
 	}
 
-	actual := generator2.NewNamesRegister(&generator2.EntityInfo{
+	actual := g.NewNamesRegister(&g.EntityInfo{
 		EntityName:      "User",
 		EntityPackage:   "entity",
 		FullPackagePath: "project/entity",
