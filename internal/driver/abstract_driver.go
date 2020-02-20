@@ -15,7 +15,7 @@ const (
 
 type AbstractDriver interface {
 	openConnection() (*gorm.DB, error)
-	FindAllTables() ([]TableInfo, error)
+	FindAllTables() ([]*TableInfo, error)
 }
 
 type DatabaseInfo struct {

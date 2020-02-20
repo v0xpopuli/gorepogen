@@ -28,13 +28,13 @@ func (d postgresDriver) openConnection() (*gorm.DB, error) {
 	))
 }
 
-func (d postgresDriver) FindAllTables() ([]TableInfo, error) {
+func (d postgresDriver) FindAllTables() ([]*TableInfo, error) {
 	conn, err := d.openConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	var tables []TableInfo
+	var tables []*TableInfo
 	err = conn.
 		Table("information_schema.columns").
 		Select("table_name, column_name, data_type").
