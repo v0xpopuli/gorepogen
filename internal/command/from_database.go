@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	"github.com/v0xpopuli/gorepogen/internal/driver"
+	ent "github.com/v0xpopuli/gorepogen/internal/generator/entity"
 )
 
 var (
@@ -34,11 +35,17 @@ func (g generateFromDatabase) generate(*cli.Context) error {
 		return err
 	}
 
-	// TODO: reminder - pass driver to generator
-	_, err := driver.Get(g.getDbInfo())
+	drv, err := driver.Get(g.getDbInfo())
 	if err != nil {
 		return err
 	}
+
+	tables, err := drv.FindAllTables()
+	if err != nil {
+		return err
+	}
+
+	ent.NewGenerator().Generate(tables)
 
 	return nil
 }

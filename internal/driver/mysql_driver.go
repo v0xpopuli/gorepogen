@@ -28,13 +28,13 @@ func (d mysqlDriver) openConnection() (*gorm.DB, error) {
 	))
 }
 
-func (d mysqlDriver) FindAllTables() ([]*TableInfo, error) {
+func (d mysqlDriver) FindAllTables() ([]TableInfo, error) {
 	conn, err := d.openConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	var tables []*TableInfo
+	var tables []TableInfo
 	err = conn.
 		Table("information_schema.columns").
 		Select("table_name as table_name, column_name as column_name, data_type as data_type").
