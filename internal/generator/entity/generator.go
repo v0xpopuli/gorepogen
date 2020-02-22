@@ -13,6 +13,11 @@ func NewGenerator() *generator {
 	return &generator{}
 }
 
+type entityInfo struct {
+	name   string
+	fields []field
+}
+
 type field struct {
 	name  string
 	dtype string
@@ -31,29 +36,28 @@ func (g generator) makeEntityDir(fileName, currentDir, entityPackageName string)
 	return filepath.Join(entityDir, fileName)
 }
 
-func (g generator) mapTableInfoToEntityInfo(tableInfo []driver.TableInfo) map[string][]field {
-
-	var name string
-	var fields []field
-	map1 := make(map[string][]field, 0)
+// not the most elegant solution, PR's are welcome
+func (g generator) mapTableInfoToEntityInfo(tableInfo []driver.TableInfo) (infos []entityInfo) {
+	// TODO: great potential to refactoring
+	var info entityInfo
 	for i, t := range tableInfo {
-		if name == "" {
-			name = t.TableName
+		if info.name == "" {
+			info.name = t.TableName
 		}
-		if name == t.TableName {
-			fields = append(fields, field{
+		if info.name == t.TableName {
+			info.fields = append(info.fields, field{
 				name:  t.ColumnName,
 				dtype: t.DataType,
 			})
 		} else {
-			map1[name] = fields
-			fields = make([]field, 0)
-			name = t.TableName
+			infos = append(infos, info)
+			info.fields = make([]field, 0)
+			info.name = t.TableName
 		}
 		if i == len(tableInfo)-1 {
-			map1[name] = fields
+			infos = append(infos, info)
 		}
 	}
 
-	return nil
+	return infos
 }
