@@ -28,21 +28,31 @@ func (d mysqlDriver) openConnection() (*gorm.DB, error) {
 	))
 }
 
-func (d mysqlDriver) FindAllTables() ([]TableInfo, error) {
+func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 	conn, err := d.openConnection()
 	if err != nil {
 		return nil, err
 	}
 
-	var tables []TableInfo
-	err = conn.
+	var (
+		tName, cName, dType string
+		tables              = make(map[string][]Field, 0)
+	)
+	rows, err := conn.
 		Table("information_schema.columns").
 		Select("table_name as table_name, column_name as column_name, data_type as data_type").
 		Where("table_schema = ?", d.SchemaName).
-		Scan(&tables).
-		Error
+		Rows()
 	if err != nil {
 		return nil, err
+	}
+
+	for rows.Next() {
+		_ = rows.Scan(&tName, &cName, &dType)
+		tables[tName] = append(tables[tName], Field{
+			name:  cName,
+			dtype: dType,
+		})
 	}
 
 	return tables, nil
