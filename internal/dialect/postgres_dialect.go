@@ -1,34 +1,34 @@
-package driver
+package dialect
 
 import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type mysqlDriver struct {
+type postgresDriver struct {
 	*DatabaseInfo
 }
 
-func NewMysqlDriver(info *DatabaseInfo) AbstractDriver {
-	return &mysqlDriver{
+func NewPostgresDriver(info *DatabaseInfo) AbstractDriver {
+	return &postgresDriver{
 		DatabaseInfo: info,
 	}
 }
 
-func (d mysqlDriver) openConnection() (*gorm.DB, error) {
+func (d postgresDriver) openConnection() (*gorm.DB, error) {
 	return gorm.Open(d.DriverName, fmt.Sprintf(
-		"%s:%s@(%s:%s)/%s?multiStatements=true",
-		d.Username,
-		d.Password,
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=disable",
 		d.Host,
 		d.Port,
+		d.Username,
 		d.DatabaseName,
+		d.Password,
 	))
 }
 
-func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
+func (d postgresDriver) FindAllTables() (map[string][]Field, error) {
 	conn, err := d.openConnection()
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 	)
 	rows, err := conn.
 		Table("information_schema.columns").
-		Select("table_name as table_name, column_name as column_name, data_type as data_type").
+		Select("table_name, column_name, data_type").
 		Where("table_schema = ?", d.SchemaName).
 		Rows()
 	if err != nil {
@@ -48,11 +48,14 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 	}
 
 	for rows.Next() {
-		_ = rows.Scan(&tName, &cName, &dType)
+		err = rows.Scan(&tName, &cName, &dType)
 		tables[tName] = append(tables[tName], Field{
 			name:  cName,
-			dtype: dType,
+			cType: mapDBTypeToVarType(dType),
 		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return tables, nil

@@ -1,4 +1,4 @@
-package driver
+package dialect
 
 import (
 	"errors"
@@ -30,7 +30,7 @@ type DatabaseInfo struct {
 
 type Field struct {
 	name  string
-	dtype string
+	vType string
 }
 
 func Get(info *DatabaseInfo) (AbstractDriver, error) {
@@ -42,4 +42,8 @@ func Get(info *DatabaseInfo) (AbstractDriver, error) {
 	default:
 		return nil, ErrUnsupportableDriver
 	}
+}
+
+func mapDBTypeToVarType(dType string) string {
+	return ""
 }
