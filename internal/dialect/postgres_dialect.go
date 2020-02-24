@@ -51,7 +51,7 @@ func (d postgresDriver) FindAllTables() (map[string][]Field, error) {
 		err = rows.Scan(&tName, &cName, &dType)
 		tables[tName] = append(tables[tName], Field{
 			name:  cName,
-			cType: mapDBTypeToVarType(dType),
+			vType: d.mapDBTypeToVarType(dType),
 		})
 		if err != nil {
 			return nil, err
@@ -59,4 +59,8 @@ func (d postgresDriver) FindAllTables() (map[string][]Field, error) {
 	}
 
 	return tables, nil
+}
+
+func (d postgresDriver) mapDBTypeToVarType(string) string {
+	panic("implement me")
 }

@@ -2,6 +2,7 @@ package dialect
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -51,7 +52,7 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 		err = rows.Scan(&tName, &cName, &dType)
 		tables[tName] = append(tables[tName], Field{
 			name:  cName,
-			cType: mapDBTypeToVarType(dType),
+			vType: d.mapDBTypeToVarType(dType),
 		})
 		if err != nil {
 			return nil, err
@@ -59,4 +60,30 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 	}
 
 	return tables, nil
+}
+
+var (
+	boolTypes    = []string{"tinyint"}
+	decimalTypes = []string{"decimal", "float", "double"}
+	integerTypes = []string{"smallint", "mediumint", "int", "bigint", "bit"}
+	timeTypes    = []string{"date", "time", "datetime", "timestamp", "year"}
+	stringTypes  = []string{"char", "varchar", "binary", "varbinary", "tinyblob", "blob", "mediumblob", "longblob", "tinytext", "text", "mediumtext", "longtext"}
+)
+
+func (d mysqlDriver) mapDBTypeToVarType(dType string) string {
+	t := strings.ToLower(dType)
+	switch {
+	case containsType(boolTypes, t):
+		return "bool"
+	case containsType(decimalTypes, t):
+		return "float32"
+	case containsType(integerTypes, t):
+		return "int32"
+	case containsType(stringTypes, t):
+		return "string"
+	case containsType(timeTypes, t):
+		return "time.Time"
+	default:
+		return "interface{}"
+	}
 }

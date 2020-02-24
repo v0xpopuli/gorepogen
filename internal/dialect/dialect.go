@@ -15,6 +15,7 @@ const (
 
 type AbstractDriver interface {
 	openConnection() (*gorm.DB, error)
+	mapDBTypeToVarType(string) string
 	FindAllTables() (map[string][]Field, error)
 }
 
@@ -44,6 +45,11 @@ func Get(info *DatabaseInfo) (AbstractDriver, error) {
 	}
 }
 
-func mapDBTypeToVarType(dType string) string {
-	return ""
+func containsType(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
