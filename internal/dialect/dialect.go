@@ -11,6 +11,13 @@ var ErrUnsupportableDriver = errors.New("unsupportable driver provided")
 const (
 	mysqlDriverName    = "mysql"
 	postgresDriverName = "postgres"
+
+	boolType      = "bool"
+	float32Type   = "float32"
+	int32Type     = "int32"
+	stringType    = "string"
+	timeType      = "time.Time"
+	interfaceType = "interface{}"
 )
 
 type AbstractDriver interface {
@@ -43,13 +50,4 @@ func Get(info *DatabaseInfo) (AbstractDriver, error) {
 	default:
 		return nil, ErrUnsupportableDriver
 	}
-}
-
-func containsType(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }

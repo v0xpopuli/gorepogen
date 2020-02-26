@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/v0xpopuli/gorepogen/internal/util"
 )
 
 type mysqlDriver struct {
@@ -73,17 +74,17 @@ var (
 func (d mysqlDriver) mapDBTypeToVarType(dType string) string {
 	t := strings.ToLower(dType)
 	switch {
-	case containsType(boolTypes, t):
-		return "bool"
-	case containsType(decimalTypes, t):
-		return "float32"
-	case containsType(integerTypes, t):
-		return "int32"
-	case containsType(stringTypes, t):
-		return "string"
-	case containsType(timeTypes, t):
-		return "time.Time"
+	case util.Contains(boolTypes, t):
+		return boolType
+	case util.Contains(decimalTypes, t):
+		return float32Type
+	case util.Contains(integerTypes, t):
+		return int32Type
+	case util.Contains(stringTypes, t):
+		return stringType
+	case util.Contains(timeTypes, t):
+		return timeType
 	default:
-		return "interface{}"
+		return interfaceType
 	}
 }
