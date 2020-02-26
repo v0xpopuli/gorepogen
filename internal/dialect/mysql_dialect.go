@@ -2,11 +2,10 @@ package dialect
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/v0xpopuli/gorepogen/internal/util"
+	"github.com/v0xpopuli/gorepogen/internal/dialect/dbtype"
 )
 
 type mysqlDriver struct {
@@ -53,7 +52,7 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 		err = rows.Scan(&tName, &cName, &dType)
 		tables[tName] = append(tables[tName], Field{
 			name:  cName,
-			vType: d.mapDBTypeToVarType(dType),
+			vType: dbtype.MapDBTypeToVarType(dType),
 		})
 		if err != nil {
 			return nil, err
@@ -61,30 +60,4 @@ func (d mysqlDriver) FindAllTables() (map[string][]Field, error) {
 	}
 
 	return tables, nil
-}
-
-var (
-	boolTypes    = []string{"tinyint"}
-	decimalTypes = []string{"decimal", "float", "double"}
-	integerTypes = []string{"smallint", "mediumint", "int", "bigint", "bit"}
-	timeTypes    = []string{"date", "time", "datetime", "timestamp", "year"}
-	stringTypes  = []string{"char", "varchar", "binary", "varbinary", "tinyblob", "blob", "mediumblob", "longblob", "tinytext", "text", "mediumtext", "longtext"}
-)
-
-func (d mysqlDriver) mapDBTypeToVarType(dType string) string {
-	t := strings.ToLower(dType)
-	switch {
-	case util.Contains(boolTypes, t):
-		return boolType
-	case util.Contains(decimalTypes, t):
-		return float32Type
-	case util.Contains(integerTypes, t):
-		return int32Type
-	case util.Contains(stringTypes, t):
-		return stringType
-	case util.Contains(timeTypes, t):
-		return timeType
-	default:
-		return interfaceType
-	}
 }

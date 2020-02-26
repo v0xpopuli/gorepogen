@@ -11,18 +11,10 @@ var ErrUnsupportableDriver = errors.New("unsupportable driver provided")
 const (
 	mysqlDriverName    = "mysql"
 	postgresDriverName = "postgres"
-
-	boolType      = "bool"
-	float32Type   = "float32"
-	int32Type     = "int32"
-	stringType    = "string"
-	timeType      = "time.Time"
-	interfaceType = "interface{}"
 )
 
 type AbstractDriver interface {
 	openConnection() (*gorm.DB, error)
-	mapDBTypeToVarType(string) string
 	FindAllTables() (map[string][]Field, error)
 }
 
