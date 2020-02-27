@@ -31,7 +31,7 @@ func TestGenerate(t *testing.T) {
 		RepositoryPackageName: "repository",
 	}
 
-	actual, err := NewGenerator(namesRegistry).Generate(cd)
+	actual, err := NewGenerator(namesRegistry, "").Generate(cd)
 	asrt.Nil(err)
 	asrt.Equal(expected, actual)
 

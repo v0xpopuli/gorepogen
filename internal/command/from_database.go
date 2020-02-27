@@ -1,7 +1,6 @@
 package command
 
 import (
-	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
 	"github.com/v0xpopuli/gorepogen/internal/connector"
 	"github.com/v0xpopuli/gorepogen/internal/connector/mapper"
@@ -10,8 +9,6 @@ import (
 
 var (
 	drvName, username, password, host, port, dbName, schema string
-
-	ErrGenDBHelp = errors.New(`Use "gorepogen gendb -h" for help`)
 )
 
 type generateFromDatabase struct{}
@@ -25,16 +22,12 @@ func (g generateFromDatabase) CreateCommand() *cli.Command {
 		Name:    "gendb",
 		Aliases: []string{"gd"},
 		Usage:   "generate repositories from database",
-		Flags:   g.buildFlags(),
+		Flags:   g.getFlags(),
 		Action:  g.generate,
 	}
 }
 
-func (g generateFromDatabase) generate(*cli.Context) error {
-
-	if err := g.checkArgs(); err != nil {
-		return err
-	}
+func (g generateFromDatabase) generate(ctx *cli.Context) error {
 
 	conn, err := connector.NewConnector(g.getDbInfo())
 	if err != nil {
@@ -51,63 +44,63 @@ func (g generateFromDatabase) generate(*cli.Context) error {
 		return err
 	}
 
-	ent.NewGenerator().Generate(entityDefinition)
+	ent.NewGenerator().Generate(entityDefinition, ctx.String("output"))
 
 	return nil
 }
 
-func (generateFromDatabase) buildFlags() []cli.Flag {
+func (generateFromDatabase) getFlags() []cli.Flag {
 	return []cli.Flag{
 		&cli.StringFlag{
-			Name:        "drvName",
-			Aliases:     []string{"dr"},
+			Name:        "drvname",
+			Aliases:     []string{"r"},
 			Usage:       "Driver name (mysql or postgres)",
 			Destination: &drvName,
+			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "username",
-			Aliases:     []string{"us"},
+			Aliases:     []string{"u"},
 			Usage:       "Database username",
 			Destination: &username,
+			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "password",
-			Aliases:     []string{"pw"},
+			Aliases:     []string{"w"},
 			Usage:       "Database password",
 			Destination: &password,
+			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "host",
-			Aliases:     []string{"hs"},
+			Aliases:     []string{"h"},
 			Usage:       "Database host",
 			Destination: &host,
+			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "port",
-			Aliases:     []string{"pr"},
+			Aliases:     []string{"p"},
 			Usage:       "Database port",
 			Destination: &port,
+			Required:    true,
 		},
 		&cli.StringFlag{
-			Name:        "dbName",
-			Aliases:     []string{"db"},
+			Name:        "dbname",
+			Aliases:     []string{"d"},
 			Usage:       "Database name",
 			Destination: &dbName,
+			Required:    true,
 		},
 		&cli.StringFlag{
 			Name:        "schema",
-			Aliases:     []string{"sc"},
+			Aliases:     []string{"s"},
 			Usage:       "Schema name",
 			Destination: &schema,
+			Required:    true,
 		},
 	}
-}
-
-func (g generateFromDatabase) checkArgs() error {
-	if drvName == "" || username == "" || password == "" || host == "" || port == "" || dbName == "" || schema == "" {
-		return ErrGenDBHelp
-	}
-	return nil
 }
 
 func (g generateFromDatabase) getDbInfo() *connector.DatabaseInfo {

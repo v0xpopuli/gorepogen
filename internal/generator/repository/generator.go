@@ -12,13 +12,15 @@ import (
 
 type generator struct {
 	namesRegistry gen.NamesRegister
+	outputDir     string
 	components    []rc.Appender
 }
 
 // NewGenerator make new instance of generator
-func NewGenerator(namesRegistry gen.NamesRegister) *generator {
+func NewGenerator(namesRegistry gen.NamesRegister, outputDir string) *generator {
 	return &generator{
 		namesRegistry: namesRegistry,
+		outputDir:     outputDir,
 		components: []rc.Appender{
 			rc.NewInterface(namesRegistry.GetInterfaceNames()),
 			rc.NewStruct(namesRegistry.GetStructNames()),
@@ -55,6 +57,9 @@ func (g generator) newRepository(repositoryPackageName string, namesRegistry gen
 }
 
 func (g generator) makeRepositoryDir(fileName, currentDir, repositoryPackageName string) string {
+	if g.outputDir != "" {
+		return filepath.Join(g.outputDir, fileName)
+	}
 	repositoryDir := filepath.Join(currentDir, repositoryPackageName)
 	_ = os.MkdirAll(repositoryDir, os.ModePerm)
 	return filepath.Join(repositoryDir, fileName)

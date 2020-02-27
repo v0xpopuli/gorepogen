@@ -11,7 +11,7 @@ func NewGenerator() *generator {
 	return &generator{}
 }
 
-func (g generator) Generate(entityDefinition Definition) (string, error) {
+func (g generator) Generate(entityDefinition Definition, outputDirectory string) (string, error) {
 	return "", nil
 }
 
