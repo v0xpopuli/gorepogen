@@ -3,8 +3,6 @@ package entity
 import (
 	"os"
 	"path/filepath"
-
-	"github.com/v0xpopuli/gorepogen/internal/dialect"
 )
 
 type generator struct{}
@@ -13,7 +11,7 @@ func NewGenerator() *generator {
 	return &generator{}
 }
 
-func (g generator) Generate(tables map[string][]dialect.Field) (string, error) {
+func (g generator) Generate(entityDefinition Definition) (string, error) {
 	return "", nil
 }
 

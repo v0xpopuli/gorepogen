@@ -3,7 +3,8 @@ package command
 import (
 	"github.com/pkg/errors"
 	"github.com/urfave/cli/v2"
-	"github.com/v0xpopuli/gorepogen/internal/dialect"
+	"github.com/v0xpopuli/gorepogen/internal/connector"
+	"github.com/v0xpopuli/gorepogen/internal/connector/mapper"
 	ent "github.com/v0xpopuli/gorepogen/internal/generator/entity"
 )
 
@@ -35,17 +36,22 @@ func (g generateFromDatabase) generate(*cli.Context) error {
 		return err
 	}
 
-	drv, err := dialect.Get(g.getDbInfo())
+	conn, err := connector.NewConnector(g.getDbInfo())
 	if err != nil {
 		return err
 	}
 
-	tables, err := drv.FindAllTables()
+	tables, err := conn.FindAllTables()
 	if err != nil {
 		return err
 	}
 
-	ent.NewGenerator().Generate(tables)
+	entityDefinition, err := mapper.MapTablesToEntityDefinition(tables)
+	if err != nil {
+		return err
+	}
+
+	ent.NewGenerator().Generate(entityDefinition)
 
 	return nil
 }
@@ -104,8 +110,8 @@ func (g generateFromDatabase) checkArgs() error {
 	return nil
 }
 
-func (g generateFromDatabase) getDbInfo() *dialect.DatabaseInfo {
-	return &dialect.DatabaseInfo{
+func (g generateFromDatabase) getDbInfo() *connector.DatabaseInfo {
+	return &connector.DatabaseInfo{
 		SchemaName:   schema,
 		DriverName:   drvName,
 		Username:     username,

@@ -1,4 +1,9 @@
-package dbtype
+package mapper
+
+import (
+	"github.com/v0xpopuli/gorepogen/internal/connector"
+	"github.com/v0xpopuli/gorepogen/internal/generator/entity"
+)
 
 var matchers = []TypeMatcher{
 	NewMappingType(
@@ -41,9 +46,20 @@ var matchers = []TypeMatcher{
 	),
 }
 
-func MapDBTypeToVarType(dType string) string {
+func MapTablesToEntityDefinition(tables []connector.Table) (entity.Definition, error) {
+	entityDefinition := make(entity.Definition, 0)
+	for _, t := range tables {
+		entityDefinition[t.TableName] = append(entityDefinition[t.TableName], entity.Field{
+			VarName: t.ColumnName,
+			VarType: mapColumnTypeToVarType(t.ColumnType),
+		})
+	}
+	return entityDefinition, nil
+}
+
+func mapColumnTypeToVarType(columnType string) string {
 	for _, m := range matchers {
-		match, ok := m.Match(dType)
+		match, ok := m.Match(columnType)
 		if ok {
 			return match
 		}
