@@ -17,8 +17,9 @@ var matchers = []TypeMatcher{
 	NewMappingType(
 		"time.Time",
 		[]string{
-			"date", "time", "datetime", "timestamp",
-			"year", "interval", "timestamptz",
+			"date", "time", "datetime",
+			"timestamp", "year", "interval",
+			"timestamptz", "timestamp with time zone",
 		},
 	),
 	NewMappingType(
