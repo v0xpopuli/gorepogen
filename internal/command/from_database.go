@@ -44,7 +44,10 @@ func (g generateFromDatabase) generate(ctx *cli.Context) error {
 		return err
 	}
 
-	ent.NewGenerator().Generate(entityDefinition, ctx.String("output"))
+	_, _ = ent.NewGenerator(
+		entityDefinition,
+		ctx.String("output"),
+	).Generate()
 
 	return nil
 }

@@ -38,9 +38,9 @@ func (g generateFromEntity) generate(ctx *cli.Context) error {
 	}
 
 	repositoryFullPath, err := repo.NewGenerator(
+		g.resolveOutputDir(ctx.String("output")),
 		gen.NewNamesRegister(entityInfo),
-		ctx.String("output"),
-	).Generate(root)
+	).Generate()
 	if err != nil {
 		return err
 	}
@@ -75,4 +75,11 @@ func (g generateFromEntity) getFlags() []cli.Flag {
 func (g generateFromEntity) getCurrentPath() string {
 	path, _ := os.Getwd()
 	return path
+}
+
+func (g generateFromEntity) resolveOutputDir(outputDir string) string {
+	if outputDir == "" {
+		return root
+	}
+	return outputDir
 }
