@@ -14,6 +14,8 @@ import (
 
 var (
 	name, root string
+
+	fromEntitySuccessMessage = "Repository for %s generated successfully, location: %s\n"
 )
 
 type generateFromEntity struct{}
@@ -45,9 +47,7 @@ func (g generateFromEntity) generate(ctx *cli.Context) error {
 		return err
 	}
 
-	fmt.Printf(
-		"Repository for %s generated successfully, location: %s\n", info.EntityName, fullRepoPath,
-	)
+	fmt.Printf(fromEntitySuccessMessage, info.EntityName, fullRepoPath)
 	return nil
 }
 
