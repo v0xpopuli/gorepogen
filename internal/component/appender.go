@@ -3,7 +3,6 @@ package component
 import (
 	j "github.com/dave/jennifer/jen"
 	"github.com/v0xpopuli/gorepogen/internal/param"
-	"github.com/v0xpopuli/gorepogen/internal/walker"
 )
 
 // Appender is implemented by repository components,
@@ -16,13 +15,13 @@ type components struct {
 	components []Appender
 }
 
-func New(info *walker.EntityInfo, withEntity bool) *components {
+func New(info *param.EntityInfo, withEntity bool) *components {
 	return &components{
 		components: setUpComponents(info, withEntity),
 	}
 }
 
-func setUpComponents(info *walker.EntityInfo, withEntity bool) []Appender {
+func setUpComponents(info *param.EntityInfo, withEntity bool) []Appender {
 	components := []Appender{
 		NewInterface(param.NewInterfaceParams(info)),
 		NewStruct(param.NewStructParams(info)),

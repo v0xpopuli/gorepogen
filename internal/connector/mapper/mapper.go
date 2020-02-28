@@ -46,8 +46,8 @@ var matchers = []TypeMatcher{
 	),
 }
 
-func MapTablesToEntityDefinition(tables []connector.Table) (param.Definition, error) {
-	entityDefinition := make(param.Definition, 0)
+func MapTablesToEntityDefinition(tables []connector.Table) (param.EntityDefinition, error) {
+	entityDefinition := make(param.EntityDefinition, 0)
 	for _, t := range tables {
 		entityDefinition[t.TableName] = append(entityDefinition[t.TableName], param.Field{
 			VarName: t.ColumnName,

@@ -3,49 +3,53 @@ package param
 import (
 	"fmt"
 	"strings"
-
-	"github.com/v0xpopuli/gorepogen/internal/walker"
 )
 
-// TODO: temporary place
 type (
+	// EntityInfo hold all information needed to build NameRegister
+	EntityInfo struct {
+		EntityName      string
+		EntityPackage   string
+		FullPackagePath string
+	}
+
 	Field struct {
 		VarName string
 		VarType string
 	}
 
-	Definition map[string][]Field
+	EntityDefinition map[string][]Field
+
+	InterfaceParams struct {
+		InterfaceName   string
+		EntityName      string
+		FullPackageName string
+	}
+
+	StructParams struct {
+		StructName string
+	}
+
+	ConstructorParams struct {
+		ConstructorName string
+		InterfaceName   string
+		StructName      string
+	}
+
+	MethodListParams struct {
+		ReceiverName          string
+		EntityNameWithPackage string
+	}
+
+	GeneratorParams struct {
+		FileName              string
+		PackageName           string
+		FullPackageName       string
+		RepositoryPackageName string
+	}
 )
 
-type InterfaceParams struct {
-	InterfaceName   string
-	EntityName      string
-	FullPackageName string
-}
-
-type StructParams struct {
-	StructName string
-}
-
-type ConstructorParams struct {
-	ConstructorName string
-	InterfaceName   string
-	StructName      string
-}
-
-type MethodListParams struct {
-	ReceiverName          string
-	EntityNameWithPackage string
-}
-
-type GeneratorParams struct {
-	FileName              string
-	PackageName           string
-	FullPackageName       string
-	RepositoryPackageName string
-}
-
-func NewInterfaceParams(info *walker.EntityInfo) *InterfaceParams {
+func NewInterfaceParams(info *EntityInfo) *InterfaceParams {
 	entityName := info.EntityName
 	return &InterfaceParams{
 		EntityName:      entityName,
@@ -54,13 +58,13 @@ func NewInterfaceParams(info *walker.EntityInfo) *InterfaceParams {
 	}
 }
 
-func NewStructParams(info *walker.EntityInfo) *StructParams {
+func NewStructParams(info *EntityInfo) *StructParams {
 	return &StructParams{
 		StructName: fmt.Sprintf("%sRepository", strings.ToLower(info.EntityName)),
 	}
 }
 
-func NewConstructorParams(info *walker.EntityInfo) *ConstructorParams {
+func NewConstructorParams(info *EntityInfo) *ConstructorParams {
 	entityName := info.EntityName
 	entityNameUncapitalized := strings.ToLower(entityName)
 	return &ConstructorParams{
@@ -70,7 +74,7 @@ func NewConstructorParams(info *walker.EntityInfo) *ConstructorParams {
 	}
 }
 
-func NewMethodListParams(info *walker.EntityInfo) *MethodListParams {
+func NewMethodListParams(info *EntityInfo) *MethodListParams {
 	entityName := info.EntityName
 	entityNameUncapitalized := strings.ToLower(entityName)
 	return &MethodListParams{
@@ -79,7 +83,7 @@ func NewMethodListParams(info *walker.EntityInfo) *MethodListParams {
 	}
 }
 
-func NewGeneratorParams(info *walker.EntityInfo) *GeneratorParams {
+func NewGeneratorParams(info *EntityInfo) *GeneratorParams {
 	entityName := info.EntityName
 	entityPackage := info.EntityPackage
 	entityNameUncapitalized := strings.ToLower(entityName)

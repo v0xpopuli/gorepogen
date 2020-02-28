@@ -85,7 +85,7 @@ func (generateFromDatabase) getFlags() []cli.Flag {
 		},
 		&cli.StringFlag{
 			Name:        "dbname",
-			Aliases:     []string{"dr"},
+			Aliases:     []string{"db"},
 			Usage:       "Database name",
 			Destination: &dbName,
 			Required:    true,

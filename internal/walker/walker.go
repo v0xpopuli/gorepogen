@@ -8,14 +8,8 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/v0xpopuli/gorepogen/internal/param"
 )
-
-// EntityInfo hold all information needed to build NameRegister
-type EntityInfo struct {
-	EntityName      string
-	EntityPackage   string
-	FullPackagePath string
-}
 
 type walker struct {
 	projectDir    string
@@ -35,7 +29,7 @@ func New(projectDir, entityName string) *walker {
 
 // Walk searching for entity by given entity name
 // from directory where program was ran
-func (w walker) Walk(root string) (*EntityInfo, error) {
+func (w walker) Walk(root string) (*param.EntityInfo, error) {
 
 	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
@@ -71,10 +65,10 @@ func (w walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	}
 }
 
-func (w walker) searchEntity(goFiles map[string]string) (*EntityInfo, error) {
+func (w walker) searchEntity(goFiles map[string]string) (*param.EntityInfo, error) {
 	for path, content := range goFiles {
 		if w.isEntity(content) {
-			return &EntityInfo{
+			return &param.EntityInfo{
 				EntityName:      w.entityName,
 				EntityPackage:   w.resolvePackageName(content),
 				FullPackagePath: w.resolveFullPackageName(path),
