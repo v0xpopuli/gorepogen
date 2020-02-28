@@ -1,4 +1,4 @@
-package generator
+package walker
 
 import (
 	"fmt"
@@ -24,8 +24,7 @@ type walker struct {
 	excludedDirs  []string
 }
 
-// NewWalker make new instance of walker
-func NewWalker(projectDir, entityName string) *walker {
+func New(projectDir, entityName string) *walker {
 	return &walker{
 		projectDir:    projectDir,
 		entityName:    entityName,
@@ -94,7 +93,6 @@ func (w walker) isGoFile(name string) bool {
 }
 
 func (w walker) isEntity(content string) bool {
-	// TODO: improve determining of entity
 	return strings.Contains(content, fmt.Sprintf(w.entityPattern, w.entityName))
 }
 

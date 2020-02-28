@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/v0xpopuli/gorepogen/internal/connector"
-	"github.com/v0xpopuli/gorepogen/internal/generator/entity"
+	"github.com/v0xpopuli/gorepogen/internal/param"
 )
 
 var matchers = []TypeMatcher{
@@ -46,10 +46,10 @@ var matchers = []TypeMatcher{
 	),
 }
 
-func MapTablesToEntityDefinition(tables []connector.Table) (entity.Definition, error) {
-	entityDefinition := make(entity.Definition, 0)
+func MapTablesToEntityDefinition(tables []connector.Table) (param.Definition, error) {
+	entityDefinition := make(param.Definition, 0)
 	for _, t := range tables {
-		entityDefinition[t.TableName] = append(entityDefinition[t.TableName], entity.Field{
+		entityDefinition[t.TableName] = append(entityDefinition[t.TableName], param.Field{
 			VarName: t.ColumnName,
 			VarType: mapColumnTypeToVarType(t.ColumnType),
 		})

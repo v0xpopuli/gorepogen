@@ -1,11 +1,10 @@
-package repository
+package generator
 
 import (
 	"os"
 	"path/filepath"
 	"testing"
 
-	g "github.com/v0xpopuli/gorepogen/internal/generator"
 	"github.com/v0xpopuli/gorepogen/internal/testutil"
 
 	"github.com/stretchr/testify/assert"

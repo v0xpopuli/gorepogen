@@ -1,7 +1,8 @@
-package repocomp
+package component
 
 import (
 	j "github.com/dave/jennifer/jen"
+	"github.com/v0xpopuli/gorepogen/internal/param"
 )
 
 const (
@@ -37,23 +38,21 @@ type method struct {
 }
 
 type methodsList struct {
-	receiverName          string
-	entityNameWithPackage string
-	methods               []method
+	*param.MethodListParams
+	methods []method
 }
 
 // NewMethodsList renders method list
-func NewMethodsList(receiverName, entityNameWithPackage string) Appender {
+func NewMethodsList(params *param.MethodListParams) Appender {
 	return &methodsList{
-		receiverName:          receiverName,
-		entityNameWithPackage: entityNameWithPackage,
+		MethodListParams: params,
 		methods: []method{
-			findAllMethod(receiverName, entityNameWithPackage),
-			findByIdMethod(receiverName, entityNameWithPackage),
-			saveMethod(receiverName, entityNameWithPackage),
-			updateMethod(receiverName, entityNameWithPackage),
-			deleteMethod(receiverName, entityNameWithPackage),
-			countMethod(receiverName, entityNameWithPackage),
+			findAllMethod(params.ReceiverName, params.EntityNameWithPackage),
+			findByIdMethod(params.ReceiverName, params.EntityNameWithPackage),
+			saveMethod(params.ReceiverName, params.EntityNameWithPackage),
+			updateMethod(params.ReceiverName, params.EntityNameWithPackage),
+			deleteMethod(params.ReceiverName, params.EntityNameWithPackage),
+			countMethod(params.ReceiverName, params.EntityNameWithPackage),
 		},
 	}
 }

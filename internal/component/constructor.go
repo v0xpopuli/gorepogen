@@ -1,23 +1,20 @@
-package repocomp
+package component
 
 import (
 	j "github.com/dave/jennifer/jen"
+	"github.com/v0xpopuli/gorepogen/internal/param"
 )
 
 type constructorGenerator struct {
-	constructorName string
-	interfaceName   string
-	structName      string
-	args            map[*j.Statement]*j.Statement
-	structArgs      j.Dict
+	*param.ConstructorParams
+	args       map[*j.Statement]*j.Statement
+	structArgs j.Dict
 }
 
 // NewConstructor renders constructor block
-func NewConstructor(constructorName, interfaceName, structName string) Appender {
+func NewConstructor(params *param.ConstructorParams) Appender {
 	return &constructorGenerator{
-		constructorName: constructorName,
-		interfaceName:   interfaceName,
-		structName:      structName,
+		ConstructorParams: params,
 		args: map[*j.Statement]*j.Statement{
 			j.Id("db"): j.Id("*gorm.DB"),
 		},
@@ -29,10 +26,10 @@ func NewConstructor(constructorName, interfaceName, structName string) Appender 
 
 func (cg *constructorGenerator) AppendTo(file *j.File) {
 	file.Func().
-		Id(cg.constructorName).
+		Id(cg.ConstructorName).
 		ParamsFunc(cg.generateConstructorParams()).
-		Params(j.Id(cg.interfaceName)).
-		Block(j.Return(j.Op("&").Id(cg.structName).Values(cg.structArgs))).
+		Params(j.Id(cg.InterfaceName)).
+		Block(j.Return(j.Op("&").Id(cg.StructName).Values(cg.structArgs))).
 		Line()
 }
 

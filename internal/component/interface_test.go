@@ -1,4 +1,4 @@
-package repocomp
+package component
 
 import (
 	"testing"

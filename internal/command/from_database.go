@@ -4,7 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 	"github.com/v0xpopuli/gorepogen/internal/connector"
 	"github.com/v0xpopuli/gorepogen/internal/connector/mapper"
-	ent "github.com/v0xpopuli/gorepogen/internal/generator/entity"
 )
 
 var (
@@ -39,15 +38,10 @@ func (g generateFromDatabase) generate(ctx *cli.Context) error {
 		return err
 	}
 
-	entityDefinition, err := mapper.MapTablesToEntityDefinition(tables)
+	_, err = mapper.MapTablesToEntityDefinition(tables)
 	if err != nil {
 		return err
 	}
-
-	_, _ = ent.NewGenerator(
-		entityDefinition,
-		ctx.String("output"),
-	).Generate()
 
 	return nil
 }
