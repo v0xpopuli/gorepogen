@@ -2,9 +2,12 @@ package param
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
+// TODO: separate all the params to different .go files
 type (
 	// EntityInfo hold all information needed to build NameRegister
 	EntityInfo struct {
@@ -18,7 +21,7 @@ type (
 		VarType string
 	}
 
-	EntityDefinition map[string][]Field
+	EntityDefinition map[EntityInfo][]Field
 
 	InterfaceParams struct {
 		InterfaceName   string
@@ -45,6 +48,7 @@ type (
 		FileName              string
 		PackageName           string
 		FullPackageName       string
+		OutputDirectory       string
 		RepositoryPackageName string
 	}
 )
@@ -58,9 +62,9 @@ func NewInterfaceParams(info *EntityInfo) *InterfaceParams {
 	}
 }
 
-func NewStructParams(info *EntityInfo) *StructParams {
+func NewStructParams(name string) *StructParams {
 	return &StructParams{
-		StructName: fmt.Sprintf("%sRepository", strings.ToLower(info.EntityName)),
+		StructName: name,
 	}
 }
 
@@ -83,14 +87,34 @@ func NewMethodListParams(info *EntityInfo) *MethodListParams {
 	}
 }
 
-func NewGeneratorParams(info *EntityInfo) *GeneratorParams {
+func NewGeneratorParams(info *EntityInfo, outputDir string) *GeneratorParams {
 	entityName := info.EntityName
 	entityPackage := info.EntityPackage
 	entityNameUncapitalized := strings.ToLower(entityName)
+	repo := "repository"
+	fileName := fmt.Sprintf("%s_repository.go", entityNameUncapitalized)
 	return &GeneratorParams{
-		FileName:              fmt.Sprintf("%s_repository.go", entityNameUncapitalized),
+		FileName:              fileName,
 		PackageName:           entityPackage,
 		FullPackageName:       fmt.Sprintf("%s.%s", entityPackage, entityName),
-		RepositoryPackageName: "repository",
+		OutputDirectory:       resolveOutputDir(repo, outputDir, fileName),
+		RepositoryPackageName: repo,
 	}
+}
+
+func resolveOutputDir(repo, output, fileName string) string {
+	if output != "" {
+		filepath.Join(output, fileName)
+	}
+	pwd, _ := os.Getwd()
+	pwd = filepath.Join(pwd, repo)
+	_ = os.MkdirAll(pwd, os.ModePerm)
+	return filepath.Join(pwd, fileName)
+}
+
+func (e EntityDefinition) First() (*EntityInfo, []Field) {
+	for k, v := range e {
+		return &k, v
+	}
+	return nil, nil
 }

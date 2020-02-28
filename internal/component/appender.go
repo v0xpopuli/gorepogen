@@ -1,6 +1,9 @@
 package component
 
 import (
+	"fmt"
+	"strings"
+
 	j "github.com/dave/jennifer/jen"
 	"github.com/v0xpopuli/gorepogen/internal/param"
 )
@@ -22,14 +25,15 @@ func New(info *param.EntityInfo, withEntity bool) *components {
 }
 
 func setUpComponents(info *param.EntityInfo, withEntity bool) []Appender {
+	repositoryName := fmt.Sprintf("%sRepository", strings.ToLower(info.EntityName))
 	components := []Appender{
 		NewInterface(param.NewInterfaceParams(info)),
-		NewStruct(param.NewStructParams(info)),
+		NewStruct(param.NewStructParams(repositoryName)),
 		NewConstructor(param.NewConstructorParams(info)),
 		NewMethodsList(param.NewMethodListParams(info)),
 	}
 	if withEntity {
-		components = append([]Appender{NewStruct(param.NewStructParams(info))}, components...)
+		components = append([]Appender{NewStruct(param.NewStructParams(info.EntityName))}, components...)
 	}
 	return components
 }

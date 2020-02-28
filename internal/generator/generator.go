@@ -1,9 +1,6 @@
 package generator
 
 import (
-	"os"
-	"path/filepath"
-
 	rc "github.com/v0xpopuli/gorepogen/internal/component"
 	"github.com/v0xpopuli/gorepogen/internal/param"
 
@@ -11,14 +8,12 @@ import (
 )
 
 type generator struct {
-	outputDir  string
 	params     *param.GeneratorParams
 	components []rc.Appender
 }
 
-func New(outputDir string, params *param.GeneratorParams, components []rc.Appender) *generator {
+func New(params *param.GeneratorParams, components []rc.Appender) *generator {
 	return &generator{
-		outputDir:  outputDir,
 		params:     params,
 		components: components,
 	}
@@ -32,7 +27,7 @@ func (g generator) Generate() (string, error) {
 		c.AppendTo(file)
 	}
 
-	repositoryFullPath := g.makeRepositoryDir()
+	repositoryFullPath := g.params.OutputDirectory
 	return repositoryFullPath, file.Save(repositoryFullPath)
 }
 
@@ -52,14 +47,4 @@ func (g generator) getImportNames() map[string]string {
 		"github.com/jinzhu/gorm": "gorm",
 		g.params.FullPackageName: g.params.PackageName,
 	}
-}
-
-func (g generator) makeRepositoryDir() string {
-	if g.outputDir != "" {
-		filepath.Join(g.outputDir, g.params.FileName)
-	}
-	pwd, _ := os.Getwd()
-	pwd = filepath.Join(pwd, g.params.RepositoryPackageName)
-	_ = os.MkdirAll(pwd, os.ModePerm)
-	return filepath.Join(pwd, g.params.FileName)
 }

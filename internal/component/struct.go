@@ -22,6 +22,7 @@ func (sg *structGenerator) AppendTo(file *j.File) {
 	file.Type().
 		Id(sg.StructName).
 		StructFunc(func(group *j.Group) {
+			// TODO: find a better place
 			group.Add(j.Op("*").Qual("github.com/jinzhu/gorm", "DB"))
 			for _, f := range sg.fields {
 				group.Add(f)
