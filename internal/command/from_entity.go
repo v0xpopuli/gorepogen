@@ -36,14 +36,12 @@ func (g generateFromEntity) CreateCommand() *cli.Command {
 
 func (g generateFromEntity) generate(ctx *cli.Context) error {
 
-	entityDef, err := walker.New(filepath.Base(root), name).Walk(root)
+	info, err := walker.New(filepath.Base(root), name).Walk(root)
 	if err != nil {
 		return err
 	}
 
-	// TODO: do not forget to resolve this mess
-	info, _ := entityDef.First()
-	components := component.New(info, false).GetComponents()
+	components := component.New(info).GetComponents()
 	params := param.NewGeneratorParams(info, ctx.String("output"))
 	fullRepoPath, err := generator.New(params, components).Generate()
 	if err != nil {

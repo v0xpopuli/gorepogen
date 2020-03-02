@@ -29,18 +29,18 @@ func New(projectDir, entityName string) *walker {
 
 // Walk searching for entity by given entity name
 // from directory where program was ran
-func (w walker) Walk(root string) (*param.EntityDefinition, error) {
+func (w walker) Walk(root string) (*param.EntityInfo, error) {
 
 	goFiles, err := w.collectGoFiles(root)
 	if err != nil {
 		return nil, err
 	}
 
-	entityDef, err := w.searchEntity(goFiles)
+	entityInfo, err := w.searchEntity(goFiles)
 	if err != nil {
 		return nil, err
 	}
-	return entityDef, nil
+	return entityInfo, nil
 }
 
 func (w walker) collectGoFiles(root string) (map[string]string, error) {
@@ -65,15 +65,14 @@ func (w walker) visit(goFiles map[string]string) filepath.WalkFunc {
 	}
 }
 
-func (w walker) searchEntity(goFiles map[string]string) (*param.EntityDefinition, error) {
+func (w walker) searchEntity(goFiles map[string]string) (*param.EntityInfo, error) {
 	for path, content := range goFiles {
 		if w.isEntity(content) {
-			info := param.EntityInfo{
+			return &param.EntityInfo{
 				EntityName:      w.entityName,
 				EntityPackage:   w.resolvePackageName(content),
 				FullPackagePath: w.resolveFullPackageName(path),
-			}
-			return &param.EntityDefinition{info: nil}, nil
+			}, nil
 		}
 	}
 	return nil, errors.Errorf("Can't find given entity: %s", w.entityName)

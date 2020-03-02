@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-// TODO: separate all the params to different .go files
 type (
 	// EntityInfo hold all information needed to build NameRegister
 	EntityInfo struct {
@@ -21,7 +20,7 @@ type (
 		VarType string
 	}
 
-	EntityDefinition map[EntityInfo][]Field
+	EntityDefinition map[string][]Field
 
 	InterfaceParams struct {
 		InterfaceName   string
@@ -62,9 +61,9 @@ func NewInterfaceParams(info *EntityInfo) *InterfaceParams {
 	}
 }
 
-func NewStructParams(name string) *StructParams {
+func NewStructParams(info *EntityInfo) *StructParams {
 	return &StructParams{
-		StructName: name,
+		StructName: fmt.Sprintf("%sRepository", strings.ToLower(info.EntityName)),
 	}
 }
 
@@ -110,11 +109,4 @@ func resolveOutputDir(repo, output, fileName string) string {
 	pwd = filepath.Join(pwd, repo)
 	_ = os.MkdirAll(pwd, os.ModePerm)
 	return filepath.Join(pwd, fileName)
-}
-
-func (e EntityDefinition) First() (*EntityInfo, []Field) {
-	for k, v := range e {
-		return &k, v
-	}
-	return nil, nil
 }

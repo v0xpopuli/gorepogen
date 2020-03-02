@@ -49,12 +49,7 @@ var matchers = []TypeMatcher{
 func MapTablesToEntityDefinition(tables []connector.Table) (param.EntityDefinition, error) {
 	entityDefinition := make(param.EntityDefinition, 0)
 	for _, t := range tables {
-		info := param.EntityInfo{
-			EntityName:      t.TableName,
-			EntityPackage:   "",
-			FullPackagePath: "",
-		}
-		entityDefinition[info] = append(entityDefinition[info], param.Field{
+		entityDefinition[t.TableName] = append(entityDefinition[t.TableName], param.Field{
 			VarName: t.ColumnName,
 			VarType: mapColumnTypeToVarType(t.ColumnType),
 		})
